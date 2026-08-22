@@ -31,6 +31,26 @@
     "file": "",
     "volume": 50
   },
+  "how_i_work": {
+    "heading": "How I Work",
+    "steps": [
+      { "timecode": "00:00:00:00", "title": "Share your vision", "description": "Drop references, tell me what you're picturing." },
+      { "timecode": "00:00:15:00", "title": "I study what you love", "description": "I go through your existing content — specifically the pieces you love most — to learn what's already working for you." },
+      { "timecode": "00:00:30:00", "title": "Sample reels", "description": "I cut 2 sample reels before any commitment, so we calibrate together before money or time is on the line." },
+      { "timecode": "00:00:45:00", "title": "We talk it through", "description": "An honest conversation about what worked and what didn't. Only then do we discuss a retainer or ongoing work." }
+    ]
+  },
+  "second_self_mention": {
+    "enabled": true,
+    "text": "For bigger or ongoing needs, there's a studio version of this.",
+    "link_label": "Second Self",
+    "link_url": ""
+  },
+  "seo": {
+    "site_title": "Anukalp Ranjan — Video Editor & Content Creator",
+    "meta_description": "Video editor and content creator based in Bangalore, working across talking-head, AI avatar, and gen AI ad film content.",
+    "social_preview_image": ""
+  },
   "closing_line_1": "Let's make",
   "closing_line_2": "something.",
   "closing_note": "Open to freelance projects, full-time roles, and creative collaborations."

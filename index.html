@@ -3,111 +3,824 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anukalp Ranjan — Video Editor & Content Creator</title>
+<title id="page-title">Anukalp Ranjan — Video Editor &amp; Content Creator</title>
+<meta name="description" id="meta-desc" content="Video editor and content creator based in Bangalore, working across talking-head, AI avatar, and gen AI ad film content.">
+<meta property="og:title" id="og-title" content="Anukalp Ranjan — Video Editor &amp; Content Creator">
+<meta property="og:description" id="og-desc" content="Video editor and content creator based in Bangalore.">
+<meta property="og:image" id="og-image" content="">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" id="tw-title" content="Anukalp Ranjan — Video Editor &amp; Content Creator">
+<meta name="twitter:description" id="tw-desc" content="Video editor and content creator based in Bangalore.">
+<meta name="twitter:image" id="tw-image" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
-  /* Bare-bones placeholder styles only — real design comes later */
-  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 40px 20px; line-height: 1.5; }
-  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-  nav a { margin-left: 20px; text-decoration: none; color: inherit; }
-  .tag { display: inline-block; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; background: #eee; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; }
-  .work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  .work-item.vertical { grid-column: span 1; }
-  .work-item.horizontal { grid-column: span 2; }
-  @media (max-width: 600px) { .work-grid { grid-template-columns: 1fr; } .work-item.horizontal { grid-column: span 1; } }
-  .work-item { border: 1px solid #ddd; border-radius: 8px; padding: 16px; cursor: pointer; }
-  .case-study { font-size: 13px; color: #555; margin-top: 8px; border-top: 1px dashed #ddd; padding-top: 8px; }
-  .work-item h3 { margin: 4px 0; }
-  .badge { color: #a67c00; font-weight: bold; font-size: 13px; }
-  .skill-bar { background: #eee; height: 6px; border-radius: 3px; margin: 4px 0 16px; }
-  .skill-fill { background: #a67c00; height: 100%; border-radius: 3px; }
-  section { margin-bottom: 60px; }
+/* ── TOKENS ── */
+:root {
+  --canvas: #0E0E10;
+  --panel: #1B1B1F;
+  --amber: #F2A93C;
+  --white: #EDEDEF;
+  --grey: #8A8A93;
+  --teal: #4FA8A0;
+  --grotesk: 'Space Grotesk', system-ui, sans-serif;
+  --mono: 'Space Mono', monospace;
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+body {
+  font-family: var(--grotesk);
+  background: var(--canvas);
+  color: var(--white);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { color: var(--amber); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+button { font-family: var(--grotesk); cursor: pointer; }
+
+/* ── WAVEFORM SPINE ── */
+#waveform-spine {
+  position: fixed;
+  left: 28px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  z-index: 50;
+  pointer-events: none;
+}
+#spine-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: color-mix(in srgb, var(--amber) 18%, transparent);
+}
+#spine-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 0%;
+  background: var(--amber);
+  transition: height 0.1s linear;
+}
+#spine-fill-teal {
+  position: absolute;
+  top: 0;
+  left: -2px;
+  width: 2px;
+  height: 0%;
+  background: var(--teal);
+  opacity: 0;
+  transition: opacity 0.4s, height 0.1s linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  #spine-fill { transition: none; }
+  #spine-fill-teal { transition: none; }
+}
+@media (max-width: 768px) { #waveform-spine { display: none; } }
+
+/* ── SPLASH ── */
+#splash {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--canvas);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+#splash-name {
+  font-family: var(--grotesk);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.02em;
+}
+#splash p {
+  color: var(--grey);
+  font-size: 0.9rem;
+}
+#enter-btn {
+  margin-top: 16px;
+  padding: 10px 28px;
+  border: 1px solid var(--amber);
+  background: none;
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+}
+#enter-btn:hover { background: var(--amber); color: var(--canvas); }
+
+/* ── MUSIC TOGGLE ── */
+#music-toggle {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 200;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--grey) 40%, transparent);
+  background: var(--panel);
+  color: var(--white);
+  font-size: 18px;
+  line-height: 1;
+  transition: border-color 0.2s;
+}
+#music-toggle:hover { border-color: var(--amber); }
+
+/* ── LIGHTBOX ── */
+#lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.93);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+#lightbox.open { display: flex; }
+#lightbox-inner {
+  position: relative;
+  width: 92%;
+  max-width: 860px;
+}
+#lightbox-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--grey);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+#lightbox-close:hover { color: var(--white); }
+#lightbox-player { aspect-ratio: 16/9; background: #000; }
+#lightbox-player iframe { width: 100%; height: 100%; border: none; }
+#lightbox-yt-link {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--grey);
+  letter-spacing: 0.05em;
+}
+#lightbox-yt-link:hover { color: var(--amber); }
+
+/* ── LAYOUT ── */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 0 64px;
+}
+@media (max-width: 768px) { .container { padding: 0 20px; } }
+section { padding: 80px 0; }
+section + section { border-top: 1px solid color-mix(in srgb, var(--grey) 15%, transparent); }
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--canvas) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid color-mix(in srgb, var(--grey) 12%, transparent);
+}
+.nav-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 0 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+@media (max-width: 768px) { .nav-inner { padding: 0 20px; } }
+#nav-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: -0.01em;
+}
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--grey);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.nav-links a:hover { color: var(--amber); text-decoration: none; }
+
+/* ── HERO ── */
+#hero { padding: 100px 0 80px; }
+#hero-role {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--amber);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+#hero-headline {
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--white);
+  margin-bottom: 28px;
+}
+#hero-headline span { display: block; }
+.hero-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
+  padding: 8px 14px;
+  border-radius: 4px;
+}
+.hero-stat .stat-num {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--amber);
+}
+.hero-stat .stat-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--grey);
+  letter-spacing: 0.04em;
+}
+
+/* ── SECTION HEADINGS ── */
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--amber);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+}
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 48px;
+}
+
+/* ── WORK GRID ── */
+#work-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+@media (max-width: 600px) { #work-list { grid-template-columns: 1fr; } }
+.work-item { background: var(--panel); border-radius: 8px; overflow: hidden; }
+.work-item.clickable { cursor: pointer; }
+.work-item.clickable:hover .work-thumb-wrap { opacity: 0.85; }
+.work-item.vertical { grid-column: span 1; }
+.work-item.horizontal { grid-column: span 2; }
+@media (max-width: 600px) { .work-item.horizontal { grid-column: span 1; } }
+.work-thumb-wrap {
+  width: 100%;
+  aspect-ratio: 9/16;
+  background: color-mix(in srgb, var(--panel) 60%, var(--canvas));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.2s;
+  position: relative;
+}
+.work-item.horizontal .work-thumb-wrap { aspect-ratio: 16/9; }
+.work-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.thumb-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 8px;
+}
+.thumb-placeholder-tag {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--grey);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.play-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.play-icon svg { opacity: 0.7; }
+.work-meta { padding: 14px 16px 18px; }
+.work-tag {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--amber);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.work-title { font-size: 0.95rem; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+.work-client { font-family: var(--mono); font-size: 0.7rem; color: var(--grey); margin-bottom: 6px; }
+.work-badge {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--amber);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.work-desc { font-size: 0.82rem; color: var(--grey); margin-top: 8px; line-height: 1.5; }
+.case-study {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed color-mix(in srgb, var(--grey) 25%, transparent);
+  font-size: 0.78rem;
+  color: var(--grey);
+  line-height: 1.5;
+}
+.case-study strong { color: var(--white); display: block; margin-bottom: 2px; font-size: 0.72rem; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
+.watch-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--grey);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.watch-link:hover { color: var(--amber); }
+
+/* ── HOW I WORK ── */
+.steps-list { display: flex; flex-direction: column; gap: 0; }
+.step-item {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0 32px;
+  padding: 28px 0;
+  border-top: 1px solid color-mix(in srgb, var(--grey) 15%, transparent);
+}
+.step-item:last-child { border-bottom: 1px solid color-mix(in srgb, var(--grey) 15%, transparent); }
+@media (max-width: 600px) {
+  .step-item { grid-template-columns: 1fr; gap: 6px; }
+}
+.step-timecode {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--amber);
+  letter-spacing: 0.04em;
+  padding-top: 3px;
+}
+.step-body h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 6px; }
+.step-body p { font-size: 0.88rem; color: var(--grey); line-height: 1.6; }
+
+/* ── ABOUT ── */
+#about-heading-block { margin-bottom: 40px; }
+#about-heading-block h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px 48px;
+}
+@media (max-width: 700px) { .about-grid { grid-template-columns: 1fr; } }
+.about-copy p { font-size: 0.95rem; color: var(--grey); line-height: 1.75; margin-bottom: 16px; }
+.about-copy p:last-child { margin-bottom: 0; }
+
+/* sound-first moment — teal accent used here only */
+.sound-moment {
+  color: var(--teal);
+  font-weight: 600;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-bottom: 28px;
+}
+.meta-item { }
+.meta-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--grey);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.meta-value { font-size: 0.9rem; color: var(--white); font-weight: 500; margin-top: 2px; }
+
+.skills-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--grey);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.skill-row { margin-bottom: 14px; }
+.skill-name { font-size: 0.82rem; color: var(--white); margin-bottom: 5px; }
+.skill-bar { background: color-mix(in srgb, var(--grey) 18%, transparent); height: 3px; border-radius: 2px; }
+.skill-fill { background: var(--amber); height: 100%; border-radius: 2px; }
+
+.tools-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--grey);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 24px;
+  margin-bottom: 10px;
+}
+.tools-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool-tag {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--grey);
+  border: 1px solid color-mix(in srgb, var(--grey) 25%, transparent);
+  padding: 3px 10px;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+}
+
+/* ── SECOND SELF ── */
+#second-self {
+  display: none;
+  background: var(--panel);
+  border-left: 2px solid color-mix(in srgb, var(--amber) 30%, transparent);
+  padding: 20px 24px;
+  margin-top: 40px;
+  border-radius: 0 6px 6px 0;
+}
+#second-self p { font-size: 0.88rem; color: var(--grey); }
+#second-self a { font-family: var(--mono); font-size: 0.8rem; color: var(--amber); }
+
+/* ── CONTACT ── */
+.closing-block { margin-bottom: 48px; }
+.closing-block h2 {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.contact-links { display: flex; flex-direction: column; gap: 16px; }
+.contact-link-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.contact-link-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--grey);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  width: 80px;
+  flex-shrink: 0;
+}
+.contact-link-value {
+  font-size: 0.95rem;
+  color: var(--white);
+}
+.contact-link-value a { color: var(--amber); }
+.closing-note {
+  margin-top: 40px;
+  font-size: 0.82rem;
+  color: var(--grey);
+  font-style: italic;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 32px 0;
+  border-top: 1px solid color-mix(in srgb, var(--grey) 12%, transparent);
+}
+.footer-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 0 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@media (max-width: 768px) { .footer-inner { padding: 0 20px; flex-direction: column; gap: 8px; text-align: center; } }
+.footer-copy {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--grey);
+  letter-spacing: 0.04em;
+}
+.footer-admin a {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: color-mix(in srgb, var(--grey) 50%, transparent);
+  letter-spacing: 0.04em;
+}
+.footer-admin a:hover { color: var(--grey); }
 </style>
 </head>
 <body>
 
-<!-- Splash / entry gate — only shown if background music is enabled AND a file is set.
-     This click is also what satisfies the browser's requirement that audio can't
-     autoplay without a user gesture. -->
-<div id="splash" style="display:none; position:fixed; inset:0; background:#111; color:#eee; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999;">
-  <p id="splash-name" style="font-size:24px; margin-bottom:8px;"></p>
-  <p style="opacity:0.7; margin-bottom:24px;">Best experienced with <em>headphones</em> on</p>
-  <button id="enter-btn" style="padding:10px 24px; border:1px solid #eee; background:none; color:#eee; cursor:pointer;">Enter</button>
+<!-- WAVEFORM SPINE -->
+<div id="waveform-spine" aria-hidden="true">
+  <div id="spine-track"></div>
+  <div id="spine-fill"></div>
+  <div id="spine-fill-teal"></div>
 </div>
 
-<!-- Background music element — src filled in from CMS data if present -->
+<!-- SPLASH -->
+<div id="splash" role="dialog" aria-modal="true" aria-label="Enter site">
+  <p id="splash-name"></p>
+  <p>Best experienced with headphones on</p>
+  <button id="enter-btn">Enter</button>
+</div>
+
+<!-- BG MUSIC -->
 <audio id="bg-music" loop></audio>
 
-<!-- Music toggle — only shown/populated if music is active -->
-<button id="music-toggle" style="display:none; position:fixed; bottom:20px; right:20px; z-index:998; border-radius:50%; width:44px; height:44px; border:1px solid #ccc; background:#fff; cursor:pointer;">🔊</button>
+<!-- MUSIC TOGGLE -->
+<button id="music-toggle" aria-label="Toggle background music">🔊</button>
 
-<!-- Video lightbox — used for embedded playback instead of leaving the site -->
-<div id="lightbox" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:997; align-items:center; justify-content:center;">
-  <div style="position:relative; width:90%; max-width:800px;">
-    <button id="lightbox-close" style="position:absolute; top:-40px; right:0; background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">✕ Close</button>
-    <div id="lightbox-player" style="aspect-ratio:16/9;"></div>
+<!-- LIGHTBOX -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Video player">
+  <div id="lightbox-inner">
+    <button id="lightbox-close">✕ Close</button>
+    <div id="lightbox-player"></div>
+    <a id="lightbox-yt-link" target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a>
   </div>
 </div>
 
-<header>
-  <strong id="site-name">Loading…</strong>
-  <nav>
-    <a href="#work">Work</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
-  </nav>
-</header>
+<!-- NAV -->
+<nav aria-label="Main navigation">
+  <div class="nav-inner">
+    <span id="nav-name">Anukalp Ranjan</span>
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
 
+<!-- HERO -->
 <section id="hero">
-  <p id="hero-role"></p>
-  <h1 id="hero-line1"></h1>
-  <h1 id="hero-line2"></h1>
-  <p><span id="stat-number"></span> — <span id="stat-label"></span></p>
+  <div class="container">
+    <p id="hero-role"></p>
+    <h1 id="hero-headline">
+      <span id="hero-line1"></span>
+      <span id="hero-line2"></span>
+    </h1>
+    <div class="hero-stat" id="hero-stat">
+      <span class="stat-num" id="stat-number"></span>
+      <span class="stat-label" id="stat-label"></span>
+    </div>
+  </div>
 </section>
 
+<!-- WORK -->
 <section id="work">
-  <h2>Selected Work</h2>
-  <div id="work-list" class="work-grid">Loading…</div>
+  <div class="container">
+    <p class="section-label">Selected Work</p>
+    <div id="work-list" role="list">Loading…</div>
+  </div>
 </section>
 
+<!-- HOW I WORK -->
+<section id="process">
+  <div class="container">
+    <p class="section-label">Process</p>
+    <h2 class="section-title" id="process-heading">How I Work</h2>
+    <div class="steps-list" id="steps-list"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
 <section id="about">
-  <h2 id="about-heading1"></h2>
-  <h2 id="about-heading2"></h2>
-  <p id="about-p1"></p>
-  <p id="about-p2"></p>
-  <p id="about-p3"></p>
-  <h3>Core Skills</h3>
-  <div id="skills-list"></div>
+  <div class="container">
+    <p class="section-label">About</p>
+    <div id="about-heading-block">
+      <h2 id="about-h1"></h2>
+      <h2 id="about-h2"></h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-copy" id="about-copy"></div>
+      <div class="about-sidebar">
+        <div class="meta-grid" id="meta-grid"></div>
+        <p class="skills-label">Core Skills</p>
+        <div id="skills-list"></div>
+        <p class="tools-label">AI Tools</p>
+        <div class="tools-list" id="tools-list"></div>
+      </div>
+    </div>
+    <div id="second-self">
+      <p id="second-self-text"></p>
+      <a id="second-self-link" href="#" style="margin-top:8px;display:inline-block;"></a>
+    </div>
+  </div>
 </section>
 
+<!-- CONTACT -->
 <section id="contact">
-  <h2 id="closing1"></h2>
-  <h2 id="closing2"></h2>
-  <p id="closing-note"></p>
-  <ul id="contact-list"></ul>
+  <div class="container">
+    <div class="closing-block">
+      <h2 id="closing1"></h2>
+      <h2 id="closing2"></h2>
+    </div>
+    <div class="contact-links" id="contact-links"></div>
+    <p class="closing-note" id="closing-note"></p>
+  </div>
 </section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy" id="footer-copy"></span>
+    <span class="footer-admin"><a href="/admin">Admin ↗</a></span>
+  </div>
+</footer>
 
 <script>
-// Global hook other parts of the site can call once real video embeds exist.
-// Pass true when a video starts playing, false when it stops/pauses.
-// Fades background music down instead of an abrupt cut.
-function duckBackgroundMusic(isVideoPlaying) {
+// ── MUSIC DUCK ──
+function duckBackgroundMusic(isPlaying) {
   const audio = document.getElementById('bg-music');
   if (!audio || !audio.src) return;
-  const baseVolume = parseInt(audio.dataset.baseVolume || '50', 10) / 100;
-  audio.volume = isVideoPlaying ? baseVolume * 0.15 : baseVolume;
+  const base = parseInt(audio.dataset.baseVolume || '50', 10) / 100;
+  audio.volume = isPlaying ? base * 0.15 : base;
 }
 
+// ── YOUTUBE ──
+let ytApiReady = false;
+let ytPlayer = null;
+let pendingVideoId = null;
+
+function loadYouTubeApi() {
+  if (document.getElementById('yt-script')) return;
+  const s = document.createElement('script');
+  s.id = 'yt-script';
+  s.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(s);
+}
+
+window.onYouTubeIframeAPIReady = function() {
+  ytApiReady = true;
+  if (pendingVideoId) openLightbox(pendingVideoId);
+};
+
+function extractYouTubeId(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtu\.be\/|v=|\/shorts\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+function openLightbox(videoId) {
+  if (!ytApiReady) {
+    pendingVideoId = videoId;
+    loadYouTubeApi();
+    return;
+  }
+  pendingVideoId = null;
+  const lb = document.getElementById('lightbox');
+  const player = document.getElementById('lightbox-player');
+  const ytLink = document.getElementById('lightbox-yt-link');
+  player.innerHTML = '';
+  ytLink.href = `https://www.youtube.com/watch?v=${videoId}`;
+  ytPlayer = new YT.Player('lightbox-player', {
+    videoId,
+    playerVars: { autoplay: 1, rel: 0, modestbranding: 1 },
+    events: {
+      onStateChange(e) {
+        duckBackgroundMusic(e.data === YT.PlayerState.PLAYING);
+      }
+    }
+  });
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('lightbox-close').focus();
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  lb.classList.remove('open');
+  if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
+  ytPlayer = null;
+  document.getElementById('lightbox-player').innerHTML = '';
+  document.body.style.overflow = '';
+  duckBackgroundMusic(false);
+}
+
+document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+// ── WAVEFORM SPINE ──
+const spineFill = document.getElementById('spine-fill');
+const spineTeal = document.getElementById('spine-fill-teal');
+
+// Sections that trigger the teal split
+let soundMomentElements = [];
+
+function updateSpine() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  spineFill.style.height = pct + '%';
+  spineTeal.style.height = pct + '%';
+
+  // Check if any sound-moment element is in viewport
+  let inSoundMoment = false;
+  soundMomentElements.forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight * 0.7 && r.bottom > window.innerHeight * 0.3) {
+      inSoundMoment = true;
+    }
+  });
+  spineTeal.style.opacity = inSoundMoment ? '1' : '0';
+}
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!prefersReducedMotion) {
+  window.addEventListener('scroll', updateSpine, { passive: true });
+  updateSpine();
+} else {
+  spineFill.style.height = '100%';
+  spineFill.style.opacity = '0.4';
+}
+
+// ── MAIN LOAD ──
 async function loadSite() {
   const [site, work] = await Promise.all([
     fetch('content/site.json').then(r => r.json()),
     fetch('content/work.json').then(r => r.json())
   ]);
 
-  // --- Background music setup ---
+  // SEO
+  if (site.seo) {
+    if (site.seo.site_title) {
+      document.getElementById('page-title').textContent = site.seo.site_title;
+      document.getElementById('og-title').content = site.seo.site_title;
+      document.getElementById('tw-title').content = site.seo.site_title;
+    }
+    if (site.seo.meta_description) {
+      document.getElementById('meta-desc').content = site.seo.meta_description;
+      document.getElementById('og-desc').content = site.seo.meta_description;
+      document.getElementById('tw-desc').content = site.seo.meta_description;
+    }
+    if (site.seo.social_preview_image) {
+      document.getElementById('og-image').content = site.seo.social_preview_image;
+      document.getElementById('tw-image').content = site.seo.social_preview_image;
+    }
+  }
+
+  // Background music
   const music = site.background_music || {};
   const musicActive = !!(music.enabled && music.file);
   const audio = document.getElementById('bg-music');
-  const toggleBtn = document.getElementById('music-toggle');
+  const toggle = document.getElementById('music-toggle');
   const splash = document.getElementById('splash');
 
   if (musicActive) {
@@ -115,160 +828,168 @@ async function loadSite() {
     const vol = (typeof music.volume === 'number' ? music.volume : 50) / 100;
     audio.dataset.baseVolume = music.volume ?? 50;
     audio.volume = vol;
-    toggleBtn.style.display = 'block';
-
-    toggleBtn.addEventListener('click', () => {
-      if (audio.muted) {
-        audio.muted = false;
-        toggleBtn.textContent = '🔊';
-      } else {
-        audio.muted = true;
-        toggleBtn.textContent = '🔇';
-      }
+    toggle.style.display = 'block';
+    toggle.addEventListener('click', () => {
+      audio.muted = !audio.muted;
+      toggle.textContent = audio.muted ? '🔇' : '🔊';
+      toggle.setAttribute('aria-label', audio.muted ? 'Unmute background music' : 'Mute background music');
     });
-
-    // Show the splash gate; music starts on the Enter click (satisfies
-    // browser autoplay rules, since it's a real user gesture).
     document.getElementById('splash-name').textContent = site.name;
     splash.style.display = 'flex';
     document.getElementById('enter-btn').addEventListener('click', () => {
       splash.style.display = 'none';
-      audio.play().catch(() => { /* user can still use the toggle manually */ });
+      audio.play().catch(() => {});
     });
   } else {
-    // No music configured or feature turned off — skip splash and toggle entirely.
     splash.style.display = 'none';
-    toggleBtn.style.display = 'none';
   }
 
-  document.getElementById('site-name').textContent = site.name;
+  // Nav + footer
+  document.getElementById('nav-name').textContent = site.name;
+  document.getElementById('footer-copy').textContent = `© ${new Date().getFullYear()} ${site.name}`;
+
+  // Hero
   document.getElementById('hero-role').textContent = site.role;
   document.getElementById('hero-line1').textContent = site.hero_line_1;
   document.getElementById('hero-line2').textContent = site.hero_line_2;
   document.getElementById('stat-number').textContent = site.stat_number;
   document.getElementById('stat-label').textContent = site.stat_label;
 
-  document.getElementById('about-heading1').textContent = site.about_heading_1;
-  document.getElementById('about-heading2').textContent = site.about_heading_2;
-  document.getElementById('about-p1').textContent = site.about_paragraph_1;
-  document.getElementById('about-p2').textContent = site.about_paragraph_2;
-  document.getElementById('about-p3').textContent = site.about_paragraph_3;
-
-  const skillsList = document.getElementById('skills-list');
-  site.core_skills.forEach(skill => {
-    const wrap = document.createElement('div');
-    wrap.innerHTML = `
-      <div>${skill.name}</div>
-      <div class="skill-bar"><div class="skill-fill" style="width:${skill.level}%"></div></div>
-    `;
-    skillsList.appendChild(wrap);
+  // Work grid
+  const workList = document.getElementById('work-list');
+  workList.innerHTML = '';
+  (work.items || []).forEach(item => {
+    const ytId = extractYouTubeId(item.video_url);
+    const hasVideo = !!ytId;
+    const hasCaseStudy = item.case_study && (item.case_study.ask || item.case_study.noticed || item.case_study.changed);
+    const card = document.createElement('div');
+    card.className = `work-item ${item.orientation || 'vertical'}${hasVideo ? ' clickable' : ''}`;
+    card.setAttribute('role', 'listitem');
+    if (hasVideo) {
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', `Play ${item.title}`);
+      card.addEventListener('click', () => openLightbox(ytId));
+      card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(ytId); } });
+    }
+    const thumbHtml = item.thumbnail
+      ? `<img src="${item.thumbnail}" alt="${item.title}" loading="lazy">`
+      : `<div class="thumb-placeholder"><span class="thumb-placeholder-tag">${item.category || ''}</span></div>`;
+    const playHtml = hasVideo ? `<div class="play-icon" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" stroke="#EDEDEF" stroke-opacity="0.4" stroke-width="1.5"/><path d="M16 13.5L28 20L16 26.5V13.5Z" fill="#EDEDEF"/></svg></div>` : '';
+    const ytLinkHtml = hasVideo ? `<a class="watch-link" href="https://www.youtube.com/watch?v=${ytId}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Watch on YouTube ↗</a>` : '';
+    const csHtml = hasCaseStudy ? `<div class="case-study">
+      ${item.case_study.ask ? `<p><strong>The ask</strong>${item.case_study.ask}</p>` : ''}
+      ${item.case_study.noticed ? `<p><strong>What I noticed</strong>${item.case_study.noticed}</p>` : ''}
+      ${item.case_study.changed ? `<p><strong>What changed</strong>${item.case_study.changed}</p>` : ''}
+    </div>` : '';
+    card.innerHTML = `
+      <div class="work-thumb-wrap">${thumbHtml}${playHtml}</div>
+      <div class="work-meta">
+        <p class="work-tag">${item.category || ''}</p>
+        <h3 class="work-title">${item.title}</h3>
+        ${item.client ? `<p class="work-client">${item.client}</p>` : ''}
+        ${item.badge ? `<p class="work-badge">${item.badge}</p>` : ''}
+        ${item.description ? `<p class="work-desc">${item.description}</p>` : ''}
+        ${ytLinkHtml}
+        ${csHtml}
+      </div>`;
+    workList.appendChild(card);
   });
 
+  // How I Work
+  const hiw = site.how_i_work || {};
+  document.getElementById('process-heading').textContent = hiw.heading || 'How I Work';
+  const stepsList = document.getElementById('steps-list');
+  (hiw.steps || []).forEach(step => {
+    const row = document.createElement('div');
+    row.className = 'step-item';
+    row.innerHTML = `
+      <p class="step-timecode">${step.timecode || ''}</p>
+      <div class="step-body">
+        <h3>${step.title}</h3>
+        <p>${step.description}</p>
+      </div>`;
+    stepsList.appendChild(row);
+  });
+
+  // About headings
+  document.getElementById('about-h1').textContent = site.about_heading_1;
+  document.getElementById('about-h2').textContent = site.about_heading_2;
+
+  // About copy — sound-first moment gets teal highlight
+  const aboutCopy = document.getElementById('about-copy');
+  const paras = [site.about_paragraph_1, site.about_paragraph_2, site.about_paragraph_3].filter(Boolean);
+  paras.forEach((txt, i) => {
+    const p = document.createElement('p');
+    // Paragraph 2 is the sound-first craft paragraph per the brief
+    if (i === 1) {
+      p.innerHTML = txt.replace(/(sound|audio|headphones|hearing|listen)/gi, '<span class="sound-moment">$1</span>');
+    } else {
+      p.textContent = txt;
+    }
+    aboutCopy.appendChild(p);
+    if (i === 1) soundMomentElements.push(p);
+  });
+
+  // Meta grid
+  const metaGrid = document.getElementById('meta-grid');
+  const metaItems = [
+    { label: 'Age', value: site.age },
+    { label: 'Speciality', value: site.speciality },
+    { label: 'Based in', value: site.based_in },
+    { label: 'Available for', value: site.available_for },
+  ].filter(m => m.value);
+  metaItems.forEach(m => {
+    metaGrid.innerHTML += `<div class="meta-item"><p class="meta-label">${m.label}</p><p class="meta-value">${m.value}</p></div>`;
+  });
+
+  // Skills
+  const skillsList = document.getElementById('skills-list');
+  (site.core_skills || []).forEach(skill => {
+    const row = document.createElement('div');
+    row.className = 'skill-row';
+    row.innerHTML = `<p class="skill-name">${skill.name}</p><div class="skill-bar"><div class="skill-fill" style="width:${skill.level}%"></div></div>`;
+    skillsList.appendChild(row);
+  });
+
+  // AI tools
+  const toolsList = document.getElementById('tools-list');
+  (site.ai_tools || []).forEach(t => {
+    const tag = document.createElement('span');
+    tag.className = 'tool-tag';
+    tag.textContent = t;
+    toolsList.appendChild(tag);
+  });
+
+  // Second Self
+  const ss = site.second_self_mention;
+  if (ss && ss.enabled) {
+    const ssEl = document.getElementById('second-self');
+    ssEl.style.display = 'block';
+    document.getElementById('second-self-text').textContent = ss.text || '';
+    const link = document.getElementById('second-self-link');
+    link.textContent = ss.link_label || 'Second Self';
+    if (ss.link_url) link.href = ss.link_url;
+    else link.removeAttribute('href');
+  }
+
+  // Contact
   document.getElementById('closing1').textContent = site.closing_line_1;
   document.getElementById('closing2').textContent = site.closing_line_2;
   document.getElementById('closing-note').textContent = site.closing_note;
+  const contactLinks = document.getElementById('contact-links');
+  const c = site.contact || {};
+  if (c.email) contactLinks.innerHTML += `<div class="contact-link-item"><span class="contact-link-label">Email</span><span class="contact-link-value"><a href="mailto:${c.email}">${c.email}</a></span></div>`;
+  if (c.instagram) contactLinks.innerHTML += `<div class="contact-link-item"><span class="contact-link-label">Instagram</span><span class="contact-link-value">${c.instagram}</span></div>`;
+  if (c.linkedin) contactLinks.innerHTML += `<div class="contact-link-item"><span class="contact-link-label">LinkedIn</span><span class="contact-link-value"><a href="https://${c.linkedin}" target="_blank" rel="noopener noreferrer">${c.linkedin}</a></span></div>`;
 
-  const contactList = document.getElementById('contact-list');
-  contactList.innerHTML = `
-    <li>Email: ${site.contact.email}</li>
-    <li>LinkedIn: ${site.contact.linkedin}</li>
-    <li>Instagram: ${site.contact.instagram}</li>
-  `;
+  // Register sound moment — the 360K stat in hero also triggers teal
+  soundMomentElements.push(document.getElementById('hero-stat'));
 
-  const workList = document.getElementById('work-list');
-  workList.innerHTML = '';
-  work.items.forEach(item => {
-    const div = document.createElement('div');
-    div.className = `work-item ${item.orientation === 'horizontal' ? 'horizontal' : 'vertical'}`;
-
-    const hasCaseStudy = item.case_study && (item.case_study.ask || item.case_study.noticed || item.case_study.changed);
-    const caseStudyHtml = hasCaseStudy ? `
-      <div class="case-study">
-        ${item.case_study.ask ? `<div><strong>The ask:</strong> ${item.case_study.ask}</div>` : ''}
-        ${item.case_study.noticed ? `<div><strong>What I noticed:</strong> ${item.case_study.noticed}</div>` : ''}
-        ${item.case_study.changed ? `<div><strong>What changed:</strong> ${item.case_study.changed}</div>` : ''}
-      </div>` : '';
-
-    div.innerHTML = `
-      <span class="tag">${item.category}</span>
-      ${item.badge ? `<div class="badge">${item.badge}</div>` : ''}
-      <h3>${item.title}</h3>
-      ${item.client ? `<p>Client: ${item.client}</p>` : ''}
-      <p>${item.description}</p>
-      ${caseStudyHtml}
-      ${item.video_url ? '<p><em>Click to play</em> · <a class="yt-link" href="' + item.video_url + '" target="_blank" onclick="event.stopPropagation()">Watch on YouTube</a></p>' : '<p><em>Video link not added yet</em></p>'}
-    `;
-
-    if (item.video_url) {
-      div.addEventListener('click', () => openLightbox(item.video_url));
-    }
-    workList.appendChild(div);
-  });
+  // Kick off spine now that sound elements are known
+  if (!prefersReducedMotion) updateSpine();
 }
 
-// --- Lightbox + YouTube embed handling ---
-function extractYouTubeId(url) {
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
-  return match ? match[1] : null;
-}
-
-let ytApiReady = false;
-let ytApiLoading = false;
-let currentPlayer = null;
-
-function loadYouTubeApi(callback) {
-  if (ytApiReady) return callback();
-  window.onYouTubeIframeAPIReady = () => { ytApiReady = true; callback(); };
-  if (!ytApiLoading) {
-    ytApiLoading = true;
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    document.head.appendChild(tag);
-  }
-}
-
-function openLightbox(videoUrl) {
-  const videoId = extractYouTubeId(videoUrl);
-  const lightbox = document.getElementById('lightbox');
-  const playerDiv = document.getElementById('lightbox-player');
-  if (!videoId) {
-    // Not a recognizable YouTube link — just open it directly instead.
-    window.open(videoUrl, '_blank');
-    return;
-  }
-  lightbox.style.display = 'flex';
-  playerDiv.innerHTML = '<div id="yt-player-target"></div>';
-
-  loadYouTubeApi(() => {
-    currentPlayer = new YT.Player('yt-player-target', {
-      videoId: videoId,
-      playerVars: { autoplay: 1 },
-      events: {
-        onStateChange: (e) => {
-          if (e.data === YT.PlayerState.PLAYING) duckBackgroundMusic(true);
-          if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) duckBackgroundMusic(false);
-        }
-      }
-    });
-  });
-}
-
-function closeLightbox() {
-  const lightbox = document.getElementById('lightbox');
-  lightbox.style.display = 'none';
-  document.getElementById('lightbox-player').innerHTML = '';
-  if (currentPlayer && currentPlayer.destroy) currentPlayer.destroy();
-  currentPlayer = null;
-  duckBackgroundMusic(false);
-}
-
-document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-document.getElementById('lightbox').addEventListener('click', (e) => {
-  if (e.target.id === 'lightbox') closeLightbox();
-});
-
-loadSite();
+loadSite().catch(console.error);
 </script>
-
 </body>
 </html>
