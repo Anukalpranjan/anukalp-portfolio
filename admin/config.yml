@@ -2,16 +2,93 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "images/uploads"
-public_folder: "/images/uploads"
+media_folder: "content/images"
+public_folder: "/content/images"
 
 collections:
-  - name: "posts"
-    label: "Posts"
-    folder: "_posts"
-    create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Date", name: "date", widget: "datetime" }
-      - { label: "Body", name: "body", widget: "markdown" }
+  - name: "work"
+    label: "Work Items"
+    files:
+      - file: "content/work.json"
+        label: "Selected Work"
+        name: "work"
+        fields:
+          - { label: "Items", name: "items", widget: "list", fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - label: "Category"
+                name: "category"
+                widget: "select"
+                options:
+                  - "Talking Head"
+                  - "AI Avatar"
+                  - "AI Avatar — Fashion"
+                  - "Gen AI Ad Film"
+              - { label: "Client", name: "client", widget: "string", required: false }
+              - { label: "Badge (e.g. stat callout)", name: "badge", widget: "string", required: false }
+              - { label: "Video URL (YouTube)", name: "video_url", widget: "string", required: false, hint: "Paste the YouTube link. It'll be embedded directly on the site with a 'Watch on YouTube' link alongside it." }
+              - { label: "Thumbnail", name: "thumbnail", widget: "image", required: false }
+              - label: "Orientation"
+                name: "orientation"
+                widget: "select"
+                default: "vertical"
+                options: ["vertical", "horizontal"]
+                hint: "Controls how this card lays out in the grid — most Reels/Shorts are vertical, ad films are often horizontal."
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - label: "Case Study (optional)"
+                name: "case_study"
+                widget: "object"
+                required: false
+                collapsed: true
+                hint: "Only shows on the site if at least one field below is filled in."
+                fields:
+                  - { label: "What they asked for", name: "ask", widget: "text", required: false }
+                  - { label: "What I noticed about their existing content", name: "noticed", widget: "text", required: false }
+                  - { label: "What changed as a result", name: "changed", widget: "text", required: false }
+            }
+
+  - name: "site"
+    label: "Site Content"
+    files:
+      - file: "content/site.json"
+        label: "About / Bio / Contact"
+        name: "site"
+        fields:
+          - { label: "Name", name: "name", widget: "string" }
+          - { label: "Role line", name: "role", widget: "string" }
+          - { label: "Hero line 1", name: "hero_line_1", widget: "string" }
+          - { label: "Hero line 2", name: "hero_line_2", widget: "string" }
+          - { label: "Stat number", name: "stat_number", widget: "string" }
+          - { label: "Stat label", name: "stat_label", widget: "string" }
+          - { label: "Age", name: "age", widget: "string" }
+          - { label: "Speciality", name: "speciality", widget: "string" }
+          - { label: "Based in", name: "based_in", widget: "string" }
+          - { label: "Available for", name: "available_for", widget: "string" }
+          - { label: "About heading 1", name: "about_heading_1", widget: "string" }
+          - { label: "About heading 2", name: "about_heading_2", widget: "string" }
+          - { label: "About paragraph 1", name: "about_paragraph_1", widget: "text" }
+          - { label: "About paragraph 2", name: "about_paragraph_2", widget: "text" }
+          - { label: "About paragraph 3", name: "about_paragraph_3", widget: "text" }
+          - { label: "AI Tools", name: "ai_tools", widget: "list" }
+          - label: "Core Skills"
+            name: "core_skills"
+            widget: "list"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Level (0-100)", name: "level", widget: "number" }
+          - label: "Contact"
+            name: "contact"
+            widget: "object"
+            fields:
+              - { label: "Email", name: "email", widget: "string" }
+              - { label: "LinkedIn", name: "linkedin", widget: "string" }
+              - { label: "Instagram", name: "instagram", widget: "string" }
+          - label: "Background Music"
+            name: "background_music"
+            widget: "object"
+            fields:
+              - { label: "Enabled (turn the whole feature on/off)", name: "enabled", widget: "boolean", default: true }
+              - { label: "Audio file", name: "file", widget: "file", required: false, hint: "Upload an mp3/wav. If left empty, no music player or 'best with headphones' intro will show on the site, regardless of the toggle above." }
+              - { label: "Volume (0-100)", name: "volume", widget: "number", default: 50, min: 0, max: 100, hint: "Default playback volume. The site automatically ducks it lower while a video is playing." }
+          - { label: "Closing line 1", name: "closing_line_1", widget: "string" }
+          - { label: "Closing line 2", name: "closing_line_2", widget: "string" }
+          - { label: "Closing note", name: "closing_note", widget: "text" }

@@ -1,50 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Anukalp Ranjan — Portfolio</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #0a0a0a; color: #f0f0f0; }
-    header { padding: 4rem 2rem 2rem; text-align: center; }
-    header h1 { font-size: 3rem; font-weight: 700; letter-spacing: -1px; }
-    header p { margin-top: 0.75rem; font-size: 1.2rem; color: #aaa; }
-    .work { max-width: 900px; margin: 3rem auto; padding: 0 2rem; }
-    .work h2 { font-size: 1.5rem; border-bottom: 1px solid #333; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
-    .card { background: #1a1a1a; border-radius: 8px; padding: 1.5rem; }
-    .card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-    .card p { font-size: 0.9rem; color: #aaa; line-height: 1.5; }
-    footer { text-align: center; padding: 3rem; color: #555; font-size: 0.85rem; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anukalp Ranjan — Video Editor & Content Creator</title>
+<style>
+  /* Bare-bones placeholder styles only — real design comes later */
+  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 40px 20px; line-height: 1.5; }
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+  nav a { margin-left: 20px; text-decoration: none; color: inherit; }
+  .tag { display: inline-block; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; background: #eee; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; }
+  .work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .work-item.vertical { grid-column: span 1; }
+  .work-item.horizontal { grid-column: span 2; }
+  @media (max-width: 600px) { .work-grid { grid-template-columns: 1fr; } .work-item.horizontal { grid-column: span 1; } }
+  .work-item { border: 1px solid #ddd; border-radius: 8px; padding: 16px; cursor: pointer; }
+  .case-study { font-size: 13px; color: #555; margin-top: 8px; border-top: 1px dashed #ddd; padding-top: 8px; }
+  .work-item h3 { margin: 4px 0; }
+  .badge { color: #a67c00; font-weight: bold; font-size: 13px; }
+  .skill-bar { background: #eee; height: 6px; border-radius: 3px; margin: 4px 0 16px; }
+  .skill-fill { background: #a67c00; height: 100%; border-radius: 3px; }
+  section { margin-bottom: 60px; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Anukalp Ranjan</h1>
-    <p>Video Editor &amp; Content Creator</p>
-  </header>
-  <section class="work">
-    <h2>Selected Work</h2>
-    <div class="grid">
-      <div class="card">
-        <h3>Project One</h3>
-        <p>Edit this content from the admin panel at <a href="/admin" style="color:#888">/admin</a>.</p>
-      </div>
-    </div>
-  </section>
-  <footer>© 2026 Anukalp Ranjan</footer>
-  <script>
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
-        }
-      });
+
+<!-- Splash / entry gate — only shown if background music is enabled AND a file is set.
+     This click is also what satisfies the browser's requirement that audio can't
+     autoplay without a user gesture. -->
+<div id="splash" style="display:none; position:fixed; inset:0; background:#111; color:#eee; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999;">
+  <p id="splash-name" style="font-size:24px; margin-bottom:8px;"></p>
+  <p style="opacity:0.7; margin-bottom:24px;">Best experienced with <em>headphones</em> on</p>
+  <button id="enter-btn" style="padding:10px 24px; border:1px solid #eee; background:none; color:#eee; cursor:pointer;">Enter</button>
+</div>
+
+<!-- Background music element — src filled in from CMS data if present -->
+<audio id="bg-music" loop></audio>
+
+<!-- Music toggle — only shown/populated if music is active -->
+<button id="music-toggle" style="display:none; position:fixed; bottom:20px; right:20px; z-index:998; border-radius:50%; width:44px; height:44px; border:1px solid #ccc; background:#fff; cursor:pointer;">🔊</button>
+
+<!-- Video lightbox — used for embedded playback instead of leaving the site -->
+<div id="lightbox" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:997; align-items:center; justify-content:center;">
+  <div style="position:relative; width:90%; max-width:800px;">
+    <button id="lightbox-close" style="position:absolute; top:-40px; right:0; background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">✕ Close</button>
+    <div id="lightbox-player" style="aspect-ratio:16/9;"></div>
+  </div>
+</div>
+
+<header>
+  <strong id="site-name">Loading…</strong>
+  <nav>
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section id="hero">
+  <p id="hero-role"></p>
+  <h1 id="hero-line1"></h1>
+  <h1 id="hero-line2"></h1>
+  <p><span id="stat-number"></span> — <span id="stat-label"></span></p>
+</section>
+
+<section id="work">
+  <h2>Selected Work</h2>
+  <div id="work-list" class="work-grid">Loading…</div>
+</section>
+
+<section id="about">
+  <h2 id="about-heading1"></h2>
+  <h2 id="about-heading2"></h2>
+  <p id="about-p1"></p>
+  <p id="about-p2"></p>
+  <p id="about-p3"></p>
+  <h3>Core Skills</h3>
+  <div id="skills-list"></div>
+</section>
+
+<section id="contact">
+  <h2 id="closing1"></h2>
+  <h2 id="closing2"></h2>
+  <p id="closing-note"></p>
+  <ul id="contact-list"></ul>
+</section>
+
+<script>
+// Global hook other parts of the site can call once real video embeds exist.
+// Pass true when a video starts playing, false when it stops/pauses.
+// Fades background music down instead of an abrupt cut.
+function duckBackgroundMusic(isVideoPlaying) {
+  const audio = document.getElementById('bg-music');
+  if (!audio || !audio.src) return;
+  const baseVolume = parseInt(audio.dataset.baseVolume || '50', 10) / 100;
+  audio.volume = isVideoPlaying ? baseVolume * 0.15 : baseVolume;
+}
+
+async function loadSite() {
+  const [site, work] = await Promise.all([
+    fetch('content/site.json').then(r => r.json()),
+    fetch('content/work.json').then(r => r.json())
+  ]);
+
+  // --- Background music setup ---
+  const music = site.background_music || {};
+  const musicActive = !!(music.enabled && music.file);
+  const audio = document.getElementById('bg-music');
+  const toggleBtn = document.getElementById('music-toggle');
+  const splash = document.getElementById('splash');
+
+  if (musicActive) {
+    audio.src = music.file;
+    const vol = (typeof music.volume === 'number' ? music.volume : 50) / 100;
+    audio.dataset.baseVolume = music.volume ?? 50;
+    audio.volume = vol;
+    toggleBtn.style.display = 'block';
+
+    toggleBtn.addEventListener('click', () => {
+      if (audio.muted) {
+        audio.muted = false;
+        toggleBtn.textContent = '🔊';
+      } else {
+        audio.muted = true;
+        toggleBtn.textContent = '🔇';
+      }
+    });
+
+    // Show the splash gate; music starts on the Enter click (satisfies
+    // browser autoplay rules, since it's a real user gesture).
+    document.getElementById('splash-name').textContent = site.name;
+    splash.style.display = 'flex';
+    document.getElementById('enter-btn').addEventListener('click', () => {
+      splash.style.display = 'none';
+      audio.play().catch(() => { /* user can still use the toggle manually */ });
+    });
+  } else {
+    // No music configured or feature turned off — skip splash and toggle entirely.
+    splash.style.display = 'none';
+    toggleBtn.style.display = 'none';
+  }
+
+  document.getElementById('site-name').textContent = site.name;
+  document.getElementById('hero-role').textContent = site.role;
+  document.getElementById('hero-line1').textContent = site.hero_line_1;
+  document.getElementById('hero-line2').textContent = site.hero_line_2;
+  document.getElementById('stat-number').textContent = site.stat_number;
+  document.getElementById('stat-label').textContent = site.stat_label;
+
+  document.getElementById('about-heading1').textContent = site.about_heading_1;
+  document.getElementById('about-heading2').textContent = site.about_heading_2;
+  document.getElementById('about-p1').textContent = site.about_paragraph_1;
+  document.getElementById('about-p2').textContent = site.about_paragraph_2;
+  document.getElementById('about-p3').textContent = site.about_paragraph_3;
+
+  const skillsList = document.getElementById('skills-list');
+  site.core_skills.forEach(skill => {
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `
+      <div>${skill.name}</div>
+      <div class="skill-bar"><div class="skill-fill" style="width:${skill.level}%"></div></div>
+    `;
+    skillsList.appendChild(wrap);
+  });
+
+  document.getElementById('closing1').textContent = site.closing_line_1;
+  document.getElementById('closing2').textContent = site.closing_line_2;
+  document.getElementById('closing-note').textContent = site.closing_note;
+
+  const contactList = document.getElementById('contact-list');
+  contactList.innerHTML = `
+    <li>Email: ${site.contact.email}</li>
+    <li>LinkedIn: ${site.contact.linkedin}</li>
+    <li>Instagram: ${site.contact.instagram}</li>
+  `;
+
+  const workList = document.getElementById('work-list');
+  workList.innerHTML = '';
+  work.items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = `work-item ${item.orientation === 'horizontal' ? 'horizontal' : 'vertical'}`;
+
+    const hasCaseStudy = item.case_study && (item.case_study.ask || item.case_study.noticed || item.case_study.changed);
+    const caseStudyHtml = hasCaseStudy ? `
+      <div class="case-study">
+        ${item.case_study.ask ? `<div><strong>The ask:</strong> ${item.case_study.ask}</div>` : ''}
+        ${item.case_study.noticed ? `<div><strong>What I noticed:</strong> ${item.case_study.noticed}</div>` : ''}
+        ${item.case_study.changed ? `<div><strong>What changed:</strong> ${item.case_study.changed}</div>` : ''}
+      </div>` : '';
+
+    div.innerHTML = `
+      <span class="tag">${item.category}</span>
+      ${item.badge ? `<div class="badge">${item.badge}</div>` : ''}
+      <h3>${item.title}</h3>
+      ${item.client ? `<p>Client: ${item.client}</p>` : ''}
+      <p>${item.description}</p>
+      ${caseStudyHtml}
+      ${item.video_url ? '<p><em>Click to play</em> · <a class="yt-link" href="' + item.video_url + '" target="_blank" onclick="event.stopPropagation()">Watch on YouTube</a></p>' : '<p><em>Video link not added yet</em></p>'}
+    `;
+
+    if (item.video_url) {
+      div.addEventListener('click', () => openLightbox(item.video_url));
     }
-  </script>
+    workList.appendChild(div);
+  });
+}
+
+// --- Lightbox + YouTube embed handling ---
+function extractYouTubeId(url) {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
+  return match ? match[1] : null;
+}
+
+let ytApiReady = false;
+let ytApiLoading = false;
+let currentPlayer = null;
+
+function loadYouTubeApi(callback) {
+  if (ytApiReady) return callback();
+  window.onYouTubeIframeAPIReady = () => { ytApiReady = true; callback(); };
+  if (!ytApiLoading) {
+    ytApiLoading = true;
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  }
+}
+
+function openLightbox(videoUrl) {
+  const videoId = extractYouTubeId(videoUrl);
+  const lightbox = document.getElementById('lightbox');
+  const playerDiv = document.getElementById('lightbox-player');
+  if (!videoId) {
+    // Not a recognizable YouTube link — just open it directly instead.
+    window.open(videoUrl, '_blank');
+    return;
+  }
+  lightbox.style.display = 'flex';
+  playerDiv.innerHTML = '<div id="yt-player-target"></div>';
+
+  loadYouTubeApi(() => {
+    currentPlayer = new YT.Player('yt-player-target', {
+      videoId: videoId,
+      playerVars: { autoplay: 1 },
+      events: {
+        onStateChange: (e) => {
+          if (e.data === YT.PlayerState.PLAYING) duckBackgroundMusic(true);
+          if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) duckBackgroundMusic(false);
+        }
+      }
+    });
+  });
+}
+
+function closeLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  lightbox.style.display = 'none';
+  document.getElementById('lightbox-player').innerHTML = '';
+  if (currentPlayer && currentPlayer.destroy) currentPlayer.destroy();
+  currentPlayer = null;
+  duckBackgroundMusic(false);
+}
+
+document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', (e) => {
+  if (e.target.id === 'lightbox') closeLightbox();
+});
+
+loadSite();
+</script>
+
 </body>
 </html>

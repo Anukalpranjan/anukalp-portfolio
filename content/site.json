@@ -1,0 +1,37 @@
+{
+  "name": "Anukalp Ranjan",
+  "role": "Video Editor & Content Creator — Bangalore",
+  "hero_line_1": "Making things",
+  "hero_line_2": "worth watching.",
+  "stat_number": "360K",
+  "stat_label": "Views in 48 hours @dmc_unchained",
+  "age": "18 Years Old",
+  "speciality": "AI Avatar & Brand Edits",
+  "based_in": "Bangalore, India",
+  "available_for": "Freelance & Full-time",
+  "about_heading_1": "Building at the",
+  "about_heading_2": "edge of what's possible.",
+  "about_paragraph_1": "I'm Anukalp Ranjan, an 18-year-old video editor and content creator. I work across AI avatar content, brand edits, and gen AI ad films.",
+  "about_paragraph_2": "Currently building at the intersection of fashion, storytelling, and AI. I focus on work that actually stops people mid-scroll.",
+  "about_paragraph_3": "Fast turnarounds, clean execution, and an eye for what makes content feel premium.",
+  "ai_tools": ["ElevenLabs", "HeyGen", "Magnific", "Morphic"],
+  "core_skills": [
+    { "name": "AI Avatar Editing", "level": 90 },
+    { "name": "DaVinci Resolve", "level": 75 },
+    { "name": "Brand Content", "level": 70 },
+    { "name": "Gen AI Ad Films", "level": 65 }
+  ],
+  "contact": {
+    "email": "anukalpranjan848236@gmail.com",
+    "linkedin": "linkedin.com/in/anukalpblr",
+    "instagram": "@anukalpx"
+  },
+  "background_music": {
+    "enabled": true,
+    "file": "",
+    "volume": 50
+  },
+  "closing_line_1": "Let's make",
+  "closing_line_2": "something.",
+  "closing_note": "Open to freelance projects, full-time roles, and creative collaborations."
+}
