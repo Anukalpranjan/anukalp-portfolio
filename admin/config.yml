@@ -6,7 +6,7 @@ backend:
   auth_endpoint: api/auth
 
 media_folder: "content/images"
-public_folder: "/content/images"
+public_folder: "https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main/content/images"
 
 collections:
   - name: "work"

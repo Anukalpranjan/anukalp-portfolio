@@ -679,8 +679,8 @@ window.addEventListener('scroll', updatePlayhead, { passive: true });
 // ── MAIN LOAD ──
 async function loadSite() {
   const [site, work] = await Promise.all([
-    fetch('content/site.json').then(r => r.json()),
-    fetch('content/work.json').then(r => r.json())
+    fetch('https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main/content/site.json').then(r => r.json()),
+    fetch('https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main/content/work.json').then(r => r.json())
   ]);
 
   // SEO
