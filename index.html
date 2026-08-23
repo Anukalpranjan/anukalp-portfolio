@@ -785,8 +785,11 @@ async function loadSite() {
       card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(ytId); } });
     }
 
-    const thumbContent = item.thumbnail
-      ? `<img src="${item.thumbnail}" alt="${item.title}" loading="lazy">`
+    const thumbSrc = item.thumbnail
+      ? (item.thumbnail.startsWith('/') ? `https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main${item.thumbnail}` : item.thumbnail)
+      : null;
+    const thumbContent = thumbSrc
+      ? `<img src="${thumbSrc}" alt="${item.title}" loading="lazy">`
       : `<div class="thumb-placeholder"></div>`;
 
     const playIcon = hasVideo ? `<div class="play-icon" aria-hidden="true"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M18 14L32 22L18 30V14Z" fill="#F5F5F0"/></svg></div>` : '';
