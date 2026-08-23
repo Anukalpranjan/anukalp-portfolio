@@ -636,10 +636,16 @@ function extractYouTubeId(url) {
   const m = url.match(/(?:youtu\.be\/|v=|\/shorts\/)([A-Za-z0-9_-]{11})/);
   return m ? m[1] : null;
 }
+function resetPlayerEl() {
+  const old = document.getElementById('lightbox-player');
+  const fresh = document.createElement('div');
+  fresh.id = 'lightbox-player';
+  old.parentNode.replaceChild(fresh, old);
+}
 function openLightbox(videoId) {
   if (!ytApiReady) { pendingVideoId = videoId; loadYouTubeApi(); return; }
   pendingVideoId = null;
-  document.getElementById('lightbox-player').innerHTML = '';
+  resetPlayerEl();
   document.getElementById('lightbox-yt-link').href = `https://www.youtube.com/watch?v=${videoId}`;
   ytPlayer = new YT.Player('lightbox-player', {
     videoId,
@@ -654,7 +660,7 @@ function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
   if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
   ytPlayer = null;
-  document.getElementById('lightbox-player').innerHTML = '';
+  resetPlayerEl();
   document.body.style.overflow = '';
   duckBackgroundMusic(false);
 }
