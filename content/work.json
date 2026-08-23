@@ -1,76 +1,100 @@
 {
   "items": [
     {
-      "id": "motivational-reel",
-      "title": "Client's Story — Motivational Reel",
-      "category": "Talking Head",
-      "client": "@dmc_unchained",
       "badge": "360K Views — 48 Hours",
-      "video_url": "",
+      "video_url": "https://youtube.com/shorts/TaklAzjCXRE?feature=share",
+      "client": "@dmc_unchained",
       "thumbnail": "",
       "orientation": "vertical",
+      "title": "Client's Story — Motivational Reel",
+      "case_study": {
+        "ask": "",
+        "noticed": "",
+        "changed": ""
+      },
+      "id": "motivational-reel",
       "description": "Client work — motivational reel edit.",
-      "case_study": { "ask": "", "noticed": "", "changed": "" }
+      "category": "Talking Head"
     },
     {
-      "id": "second-sem",
+      "badge": "",
+      "video_url": "",
+      "client": "",
+      "thumbnail": "",
+      "orientation": "vertical",
       "title": "Second Sem Hits Different",
-      "category": "Talking Head",
-      "client": "",
-      "badge": "",
-      "video_url": "",
-      "thumbnail": "",
-      "orientation": "vertical",
+      "case_study": {
+        "ask": "",
+        "noticed": "",
+        "changed": ""
+      },
+      "id": "second-sem",
       "description": "Talking head edit — college and second semester.",
-      "case_study": { "ask": "", "noticed": "", "changed": "" }
+      "category": "Talking Head"
     },
     {
-      "id": "chatgpt-vs-claude",
+      "badge": "",
+      "video_url": "",
+      "client": "",
+      "thumbnail": "",
+      "orientation": "vertical",
       "title": "ChatGPT vs Claude",
-      "category": "Talking Head",
-      "client": "",
-      "badge": "",
-      "video_url": "",
-      "thumbnail": "",
-      "orientation": "vertical",
+      "case_study": {
+        "ask": "",
+        "noticed": "",
+        "changed": ""
+      },
+      "id": "chatgpt-vs-claude",
       "description": "Talking head with motion graphics explainer cutaways.",
-      "case_study": { "ask": "", "noticed": "", "changed": "" }
+      "category": "Talking Head"
     },
     {
-      "id": "commercium-2026",
+      "badge": "",
+      "video_url": "",
+      "client": "",
+      "thumbnail": "",
+      "orientation": "vertical",
       "title": "COMMERCIUM 2026 — College Fest Promo",
-      "category": "Ad Films",
-      "client": "",
-      "badge": "",
-      "video_url": "",
-      "thumbnail": "",
-      "orientation": "vertical",
+      "case_study": {
+        "ask": "",
+        "noticed": "",
+        "changed": ""
+      },
+      "id": "commercium-2026",
       "description": "Gen AI ad film for a college fest promo.",
-      "case_study": { "ask": "", "noticed": "", "changed": "" }
+      "category": "Ad Films"
     },
     {
-      "id": "shreyas-iyer-airport-look",
+      "badge": "",
+      "video_url": "",
+      "client": "",
+      "thumbnail": "",
+      "orientation": "vertical",
       "title": "Shreyas Iyer's Airport Look Recreation",
-      "category": "AI Avatar",
-      "client": "",
-      "badge": "",
-      "video_url": "",
-      "thumbnail": "",
-      "orientation": "vertical",
+      "case_study": {
+        "ask": "",
+        "noticed": "",
+        "changed": ""
+      },
+      "id": "shreyas-iyer-airport-look",
       "description": "AI-generated fashion content.",
-      "case_study": { "ask": "", "noticed": "", "changed": "" }
+      "category": "AI Avatar"
     },
     {
-      "id": "ai-avatar-talking-head",
-      "title": "AI Avatar, Talking Head",
-      "category": "AI Avatar",
-      "client": "",
       "badge": "",
       "video_url": "",
+      "client": "",
       "thumbnail": "",
       "orientation": "vertical",
+      "title": "AI Avatar, Talking Head",
+      "case_study": {
+        "ask": "",
+        "noticed": "",
+        "changed": ""
+      },
+      "id": "ai-avatar-talking-head",
       "description": "AI avatar content.",
-      "case_study": { "ask": "", "noticed": "", "changed": "" }
+      "category": "AI Avatar"
     }
   ]
 }
