@@ -2,7 +2,7 @@ backend:
   name: github
   repo: Anukalpranjan/anukalp-portfolio
   branch: main
-  base_url: https://anukalp-portfolio.vercel.app
+  base_url: https://portfolio-anukalp-ranjan.vercel.app
   auth_endpoint: api/auth
 
 media_folder: "content/images"
