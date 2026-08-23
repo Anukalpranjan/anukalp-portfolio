@@ -686,8 +686,8 @@ window.addEventListener('scroll', updatePlayhead, { passive: true });
 async function loadSite() {
   const t = Date.now();
   const [site, work] = await Promise.all([
-    fetch(`https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main/content/site.json?t=${t}`, { cache: 'no-store' }).then(r => r.json()),
-    fetch(`https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main/content/work.json?t=${t}`, { cache: 'no-store' }).then(r => r.json())
+    fetch(`https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main/content/site.json?t=${t}`).then(r => r.json()),
+    fetch(`https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main/content/work.json?t=${t}`).then(r => r.json())
   ]);
 
   // SEO
