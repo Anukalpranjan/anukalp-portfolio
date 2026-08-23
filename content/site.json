@@ -14,14 +14,14 @@
   "about_heading_2": "edge of what's possible.",
   "about_paragraph_1": "I'm Anukalp Ranjan, an 18-year-old video editor and content creator. I mainly edit talking-head and podcast-style content — long-form for YouTube and short-form for Instagram Reels and equivalent platforms — with AI avatar and gen AI ad film work as an additional skill set.",
   "about_paragraph_2": "Currently building at the intersection of storytelling and sound. I focus on work that actually stops people mid-scroll.",
-  "about_paragraph_3": "Fast turnarounds, clean execution, and an eye for what makes content feel premium.",
+  "about_paragraph_3": "I don't disappear mid-project. Fast turnarounds, honest updates, and I stick around after the first edit — that's the whole point.",
   "ai_tools": ["ElevenLabs", "HeyGen", "Magnific", "Morphic"],
   "core_skills": [
     { "name": "Talking Head & Podcast (Long & Short-Form)", "level": 90 },
     { "name": "DaVinci Resolve", "level": 75 },
     { "name": "Brand Content", "level": 70 },
     { "name": "AI Avatar Editing", "level": 65 },
-    { "name": "Gen AI Ad Films", "level": 60 }
+    { "name": "Ad Films", "level": 60 }
   ],
   "contact": {
     "email": "anukalpranjan848236@gmail.com",
