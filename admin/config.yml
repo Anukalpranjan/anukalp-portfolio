@@ -27,9 +27,10 @@ collections:
                 name: "category"
                 widget: "select"
                 options:
-                  - "Talking Head"
-                  - "AI Avatar"
-                  - "Ad Films"
+                  - "Podcast"
+                  - "Talking Head Videos"
+                  - "AI Avatar & Brand Content"
+                  - "Gen AI Ad Films"
               - label: "Client"
                 name: "client"
                 widget: "string"

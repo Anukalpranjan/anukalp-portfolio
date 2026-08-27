@@ -14,7 +14,7 @@
       },
       "id": "motivational-reel",
       "description": "Client work — motivational reel edit.",
-      "category": "Talking Head"
+      "category": "Talking Head Videos"
     },
     {
       "badge": "",
@@ -30,7 +30,7 @@
       },
       "id": "chatgpt-vs-claude",
       "description": "Talking head with motion graphics explainer cutaways.",
-      "category": "Talking Head"
+      "category": "Talking Head Videos"
     },
     {
       "badge": "",
@@ -46,7 +46,7 @@
       },
       "id": "commercium-2026",
       "description": "Gen AI ad film for a college fest promo.",
-      "category": "Ad Films"
+      "category": "Gen AI Ad Films"
     },
     {
       "badge": "",
@@ -62,7 +62,7 @@
       },
       "id": "shreyas-iyer-airport-look",
       "description": "AI-generated fashion content.",
-      "category": "AI Avatar"
+      "category": "AI Avatar & Brand Content"
     },
     {
       "badge": "",
@@ -78,7 +78,7 @@
       },
       "id": "ai-avatar-talking-head",
       "description": "AI avatar content.",
-      "category": "AI Avatar"
+      "category": "AI Avatar & Brand Content"
     }
   ]
 }
