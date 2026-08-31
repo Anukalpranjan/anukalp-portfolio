@@ -1,0 +1,24 @@
+{
+  "title": "Client's Story — Motivational Reel",
+  "slug": "motivational-reel",
+  "category": "talking-head-videos",
+  "tags": [],
+  "order": 0,
+  "featured": true,
+  "badge": "360K Views — 48 Hours",
+  "thumbnail": "/content/images/c8c2d5f8-f64b-469c-8e98-218c80e2c5c7.png",
+  "orientation": "vertical",
+  "video_kind": "Embed link",
+  "video_embed_url": "https://youtube.com/shorts/TaklAzjCXRE?feature=share",
+  "video_file": "",
+  "description": "Client work — motivational reel edit.",
+  "client": "@dmc_unchained",
+  "tools_used": [],
+  "external_link": "",
+  "date": "2025-01-01",
+  "case_study": {
+    "ask": "",
+    "noticed": "",
+    "changed": ""
+  }
+}

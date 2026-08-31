@@ -610,6 +610,18 @@ footer {
 </footer>
 
 <script>
+// ── DATA SOURCE CONFIG ──
+const REPO = 'Anukalpranjan/anukalp-portfolio';
+const BRANCH = 'main';
+const API = `https://api.github.com/repos/${REPO}/contents`;
+const RAW = `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
+
+async function listDir(path) {
+  const r = await fetch(`${API}/${path}?ref=${BRANCH}`);
+  if (!r.ok) return [];
+  return r.json();
+}
+
 // ── MUSIC DUCK ──
 function duckBackgroundMusic(isPlaying) {
   const audio = document.getElementById('bg-music');
@@ -685,10 +697,69 @@ window.addEventListener('scroll', updatePlayhead, { passive: true });
 // ── MAIN LOAD ──
 async function loadSite() {
   const t = Date.now();
-  const [site, work] = await Promise.all([
-    fetch(`https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main/content/site.json?t=${t}`).then(r => r.json()),
-    fetch(`https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main/content/work.json?t=${t}`).then(r => r.json())
+
+  // Fetch directory listings and site content in parallel
+  const [catFiles, workFiles, site] = await Promise.all([
+    listDir('content/categories'),
+    listDir('content/work'),
+    fetch(`${RAW}/content/site.json?t=${t}`).then(r => r.json())
   ]);
+
+  // Fetch all category and work JSON files in parallel
+  const [categories, allWorkItems] = await Promise.all([
+    Promise.all(
+      catFiles
+        .filter(f => f.type === 'file' && f.name.endsWith('.json'))
+        .map(f => fetch(f.download_url).then(r => r.json()))
+    ),
+    Promise.all(
+      workFiles
+        .filter(f => f.type === 'file' && f.name.endsWith('.json'))
+        .map(f => fetch(f.download_url).then(r => r.json()))
+    )
+  ]);
+
+  // Sort categories by display rank
+  categories.sort((a, b) => (a.rank || 0) - (b.rank || 0));
+
+  // Sort work items within a category: featured first → order asc → date desc
+  function sortWork(a, b) {
+    if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
+    if ((a.order || 0) !== (b.order || 0)) return (a.order || 0) - (b.order || 0);
+    return new Date(b.date || 0) - new Date(a.date || 0);
+  }
+
+  // Build flat ordered list grouped by category rank; items appear once (primary category wins)
+  const seen = new Set();
+  const items = [];
+  categories.forEach(cat => {
+    allWorkItems
+      .filter(i =>
+        i.category === cat.slug ||
+        (Array.isArray(i.tags) && i.tags.includes(cat.slug))
+      )
+      .filter(i => {
+        const key = i.slug || i.title;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .sort(sortWork)
+      .forEach(i => items.push(i));
+  });
+  // Append items that didn't match any category
+  allWorkItems.forEach(i => {
+    const key = i.slug || i.title;
+    if (!seen.has(key)) { seen.add(key); items.push(i); }
+  });
+
+  // Helper: extract YouTube ID from item using new or legacy fields
+  function getYtId(item) {
+    const url = item.video_kind === 'Uploaded file'
+      ? null
+      : (item.video_embed_url || item.video_url || null);
+    return extractYouTubeId(url);
+  }
 
   // SEO
   if (site.seo) {
@@ -746,13 +817,13 @@ async function loadSite() {
   document.getElementById('stat-label').textContent = site.stat_label;
 
   // ── FILMSTRIP ──
-  const items = work.items || [];
-  const categories = [...new Set(items.map(i => i.category).filter(Boolean))];
-  // Map category → first matching work item element (populated after work grid renders)
+  // Only show tabs for categories that have at least one work item
   const categoryToFirstEl = {};
+  const activeCats = categories.filter(cat =>
+    items.some(i => i.category === cat.slug || (Array.isArray(i.tags) && i.tags.includes(cat.slug)))
+  );
 
-  // Build tabs
-  categories.forEach((cat, idx) => {
+  activeCats.forEach((cat, idx) => {
     if (idx > 0) {
       const tick = document.createElement('div');
       tick.className = 'filmstrip-tick';
@@ -760,13 +831,13 @@ async function loadSite() {
     }
     const btn = document.createElement('button');
     btn.className = 'filmstrip-tab';
-    btn.textContent = cat;
-    btn.dataset.cat = cat;
+    btn.textContent = cat.name;
+    btn.dataset.cat = cat.slug;
     btn.addEventListener('click', () => {
       document.querySelectorAll('.filmstrip-tab').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
-      const el = categoryToFirstEl[cat];
-      if (el) { el.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' }); }
+      const el = categoryToFirstEl[cat.slug];
+      if (el) el.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
     });
     filmstripInner.appendChild(btn);
     if (idx === 0) btn.classList.add('active');
@@ -776,17 +847,20 @@ async function loadSite() {
   const workList = document.getElementById('work-list');
   workList.innerHTML = '';
   items.forEach(item => {
-    const ytId = extractYouTubeId(item.video_url);
-    const hasVideo = !!ytId;
+    const ytId = getYtId(item);
+    const isUpload = item.video_kind === 'Uploaded file' && item.video_file;
+    const hasVideo = !!(ytId || isUpload);
     const hasCaseStudy = item.case_study && (item.case_study.ask || item.case_study.noticed || item.case_study.changed);
+
     const card = document.createElement('div');
     card.className = `work-item ${item.orientation || 'vertical'}${hasVideo ? ' clickable' : ''}`;
     card.setAttribute('role', 'listitem');
     card.dataset.category = item.category || '';
 
-    if (!categoryToFirstEl[item.category]) categoryToFirstEl[item.category] = card;
+    // Record first card for each category slug (for filmstrip scroll)
+    if (item.category && !categoryToFirstEl[item.category]) categoryToFirstEl[item.category] = card;
 
-    if (hasVideo) {
+    if (ytId) {
       card.setAttribute('tabindex', '0');
       card.setAttribute('aria-label', `Play ${item.title}`);
       card.addEventListener('click', () => openLightbox(ytId));
@@ -794,15 +868,27 @@ async function loadSite() {
     }
 
     const thumbSrc = item.thumbnail
-      ? (item.thumbnail.startsWith('/') ? `https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main${item.thumbnail}` : item.thumbnail)
+      ? (item.thumbnail.startsWith('/') ? `${RAW}${item.thumbnail}` : item.thumbnail)
       : null;
     const thumbContent = thumbSrc
       ? `<img src="${thumbSrc}" alt="${item.title}" loading="lazy">`
       : `<div class="thumb-placeholder"></div>`;
 
-    const playIcon = hasVideo ? `<div class="play-icon" aria-hidden="true"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M18 14L32 22L18 30V14Z" fill="#F5F5F0"/></svg></div>` : '';
+    const playIcon = ytId
+      ? `<div class="play-icon" aria-hidden="true"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><path d="M18 14L32 22L18 30V14Z" fill="#F5F5F0"/></svg></div>`
+      : '';
 
-    const ytLinkHtml = hasVideo ? `<a class="watch-link" href="https://www.youtube.com/watch?v=${ytId}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Watch on YouTube ↗</a>` : '';
+    // Category display name from categories collection, fallback to slug
+    const catObj = categories.find(c => c.slug === item.category);
+    const catLabel = catObj ? catObj.name : (item.category || '');
+
+    // Watch link: prefer YouTube embed link, then external_link
+    const watchUrl = ytId
+      ? `https://www.youtube.com/watch?v=${ytId}`
+      : (item.video_embed_url || item.external_link || null);
+    const watchLinkHtml = watchUrl
+      ? `<a class="watch-link" href="${watchUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Watch on YouTube ↗</a>`
+      : '';
 
     const csHtml = hasCaseStudy ? `<div class="case-study">
       ${item.case_study.ask ? `<p><strong>The ask</strong>${item.case_study.ask}</p>` : ''}
@@ -819,7 +905,7 @@ async function loadSite() {
         ${thumbContent}
         ${playIcon}
         <div class="work-hud">
-          <span class="work-hud-tag">${item.category || ''}</span>
+          <span class="work-hud-tag">${catLabel}</span>
           ${item.badge ? `<span class="work-hud-badge">${item.badge}</span>` : ''}
         </div>
       </div>
@@ -827,13 +913,13 @@ async function loadSite() {
         <h3 class="work-title">${item.title}</h3>
         ${item.client ? `<p class="work-client">${item.client}</p>` : ''}
         ${item.description ? `<p class="work-desc">${item.description}</p>` : ''}
-        ${ytLinkHtml}
+        ${watchLinkHtml}
         ${csHtml}
       </div>`;
     workList.appendChild(card);
   });
 
-  // Update active filmstrip tab on scroll
+  // Update active filmstrip tab on scroll (matches by category slug)
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {

@@ -9,76 +9,179 @@ media_folder: "content/images"
 public_folder: "https://raw.githubusercontent.com/Anukalpranjan/anukalp-portfolio/main/content/images"
 
 collections:
+  - name: "categories"
+    label: "Categories"
+    label_singular: "Category"
+    folder: "content/categories"
+    create: true
+    delete: true
+    format: json
+    extension: json
+    slug: "{{fields.slug}}"
+    summary: "{{name}} (rank {{rank}})"
+    sortable_fields: ["rank", "name"]
+    fields:
+      - label: "Name"
+        name: "name"
+        widget: "string"
+        hint: "Shown as the label on the site, e.g. 'Talking Head / Podcast Editing'"
+      - label: "Slug"
+        name: "slug"
+        widget: "string"
+        hint: "Internal ID — lowercase, no spaces"
+        pattern: ['^[a-z0-9-]+$', "Lowercase letters, numbers, and dashes only"]
+      - label: "Display Rank"
+        name: "rank"
+        widget: "number"
+        value_type: "int"
+        min: 1
+        hint: "1 = shown first on the site. Change this to reorder category sections."
+      - label: "Accent Color"
+        name: "accent_color"
+        widget: "color"
+        required: false
+        hint: "Optional — tints this category's badge/tag on the site"
+
   - name: "work"
-    label: "Work Items"
-    files:
-      - file: "content/work.json"
-        label: "Selected Work"
-        name: "work"
+    label: "Work"
+    label_singular: "Project"
+    folder: "content/work"
+    create: true
+    delete: true
+    format: json
+    extension: json
+    slug: "{{fields.slug}}"
+    summary: "{{title}} — {{category}}"
+    sortable_fields: ["order", "date", "title"]
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+      - label: "Slug"
+        name: "slug"
+        widget: "string"
+        hint: "URL-friendly ID, auto-fills from title, editable"
+        pattern: ['^[a-z0-9-]+$', "Lowercase letters, numbers, and dashes only"]
+
+      - label: "Primary Category"
+        name: "category"
+        widget: "relation"
+        collection: "categories"
+        search_fields: ["name"]
+        display_fields: ["name"]
+        value_field: "slug"
+        hint: "The main bucket this project lives in. New options come from the Categories collection."
+
+      - label: "Extra Tags"
+        name: "tags"
+        widget: "relation"
+        collection: "categories"
+        search_fields: ["name"]
+        display_fields: ["name"]
+        value_field: "slug"
+        multiple: true
+        required: false
+        hint: "Optional. Same list as Primary Category — use for projects that cross categories."
+
+      - label: "Display Order"
+        name: "order"
+        widget: "number"
+        value_type: "int"
+        default: 0
+        hint: "Position within this category. Lower = earlier. Ties fall back to date."
+
+      - label: "Featured"
+        name: "featured"
+        widget: "boolean"
+        default: false
+        hint: "Pins this project to the top of its category regardless of Display Order"
+
+      - label: "Thumbnail"
+        name: "thumbnail"
+        widget: "image"
+        required: false
+        hint: "Cover image used in the grid/list view"
+
+      - label: "Orientation"
+        name: "orientation"
+        widget: "select"
+        default: "vertical"
+        options:
+          - "vertical"
+          - "horizontal"
+        hint: "Controls how this card lays out — Reels/Shorts are vertical, ad films are often horizontal."
+
+      - label: "Badge"
+        name: "badge"
+        widget: "string"
+        required: false
+        hint: "Short stat callout shown on the thumbnail, e.g. '360K Views — 48 Hours'"
+
+      - label: "Video Source"
+        name: "video_kind"
+        widget: "select"
+        options: ["Embed link", "Uploaded file"]
+        default: "Embed link"
+
+      - label: "Video Embed URL"
+        name: "video_embed_url"
+        widget: "string"
+        required: false
+        hint: "Fill in only if Video Source is 'Embed link'. Paste a YouTube, Vimeo, or Instagram Reel URL."
+
+      - label: "Video File"
+        name: "video_file"
+        widget: "file"
+        required: false
+        hint: "Fill in only if Video Source is 'Uploaded file'. Keep under ~20MB — otherwise use Embed link."
+
+      - label: "Description"
+        name: "description"
+        widget: "text"
+        required: false
+
+      - label: "Client"
+        name: "client"
+        widget: "string"
+        required: false
+
+      - label: "Tools Used"
+        name: "tools_used"
+        widget: "list"
+        required: false
+        field: { label: "Tool", name: "tool", widget: "string" }
+
+      - label: "External Link"
+        name: "external_link"
+        widget: "string"
+        required: false
+        hint: "Optional — link to the full video, case study, or client's page"
+
+      - label: "Date"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        required: false
+
+      - label: "Case Study"
+        name: "case_study"
+        widget: "object"
+        required: false
+        collapsed: true
+        hint: "Only shows on the site if at least one field below is filled in."
         fields:
-          - label: "Items"
-            name: "items"
-            widget: "list"
-            fields:
-              - label: "Title"
-                name: "title"
-                widget: "string"
-              - label: "Category"
-                name: "category"
-                widget: "select"
-                options:
-                  - "Podcast"
-                  - "Talking Head Videos"
-                  - "AI Avatar & Brand Content"
-                  - "Gen AI Ad Films"
-              - label: "Client"
-                name: "client"
-                widget: "string"
-                required: false
-              - label: "Badge (e.g. stat callout)"
-                name: "badge"
-                widget: "string"
-                required: false
-              - label: "Video URL (YouTube)"
-                name: "video_url"
-                widget: "string"
-                required: false
-                hint: "Paste the YouTube link. It'll be embedded directly on the site with a 'Watch on YouTube' link alongside it."
-              - label: "Thumbnail"
-                name: "thumbnail"
-                widget: "image"
-                required: false
-              - label: "Orientation"
-                name: "orientation"
-                widget: "select"
-                default: "vertical"
-                options:
-                  - "vertical"
-                  - "horizontal"
-                hint: "Controls how this card lays out in the grid — most Reels/Shorts are vertical, ad films are often horizontal."
-              - label: "Description"
-                name: "description"
-                widget: "text"
-                required: false
-              - label: "Case Study (optional)"
-                name: "case_study"
-                widget: "object"
-                required: false
-                collapsed: true
-                hint: "Only shows on the site if at least one field below is filled in."
-                fields:
-                  - label: "What they asked for"
-                    name: "ask"
-                    widget: "text"
-                    required: false
-                  - label: "What I noticed about their existing content"
-                    name: "noticed"
-                    widget: "text"
-                    required: false
-                  - label: "What changed as a result"
-                    name: "changed"
-                    widget: "text"
-                    required: false
+          - label: "What they asked for"
+            name: "ask"
+            widget: "text"
+            required: false
+          - label: "What I noticed about their existing content"
+            name: "noticed"
+            widget: "text"
+            required: false
+          - label: "What changed as a result"
+            name: "changed"
+            widget: "text"
+            required: false
 
   - name: "site"
     label: "Site Content"
