@@ -455,6 +455,27 @@ section { padding: 100px 0; }
 #second-self p { font-size: 0.88rem; color: var(--grey); }
 #second-self a { font-family: var(--mono); font-size: 0.78rem; color: var(--ivory); text-decoration: underline; text-underline-offset: 3px; margin-top: 6px; display: inline-block; }
 
+/* ── INSTAGRAM ── */
+#instagram { border-top: 1px solid var(--border); display: none; }
+.ig-embed-wrap {
+  display: flex;
+  justify-content: center;
+}
+.ig-embed-wrap .instagram-media {
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+.ig-profile-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--grey);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.ig-profile-link:hover { color: var(--ivory); }
+
 /* ── CONTACT ── */
 #contact { border-top: 1px solid var(--border); }
 .closing-headline {
@@ -588,6 +609,15 @@ footer {
       <p id="second-self-text"></p>
       <a id="second-self-link" href="#">—</a>
     </div>
+  </div>
+</section>
+
+<!-- INSTAGRAM -->
+<section id="instagram">
+  <div class="container">
+    <p class="section-label" id="ig-section-label">On Instagram</p>
+    <div class="ig-embed-wrap" id="ig-embed-wrap"></div>
+    <a id="ig-profile-link" class="ig-profile-link" href="https://www.instagram.com/anukalpx" target="_blank" rel="noopener noreferrer">@anukalpx ↗</a>
   </div>
 </section>
 
@@ -988,6 +1018,41 @@ async function loadSite() {
     const link = document.getElementById('second-self-link');
     link.textContent = ss.link_label || 'Second Self';
     if (ss.link_url) link.href = ss.link_url;
+  }
+
+  // ── INSTAGRAM ──
+  const igFeat = site.instagram_feature;
+  if (igFeat && igFeat.enabled && igFeat.post_url) {
+    const igSection = document.getElementById('instagram');
+    igSection.style.display = 'block';
+    if (igFeat.caption) document.getElementById('ig-section-label').textContent = igFeat.caption;
+
+    // Render native Instagram embed
+    const wrap = document.getElementById('ig-embed-wrap');
+    const bq = document.createElement('blockquote');
+    bq.className = 'instagram-media';
+    bq.setAttribute('data-instgrm-permalink', igFeat.post_url);
+    bq.setAttribute('data-instgrm-version', '14');
+    bq.style.cssText = 'background:#000;border:0;border-radius:0;max-width:540px;width:100%;';
+    const fallback = document.createElement('a');
+    fallback.href = igFeat.post_url;
+    fallback.target = '_blank';
+    fallback.rel = 'noopener noreferrer';
+    fallback.textContent = 'View on Instagram ↗';
+    fallback.className = 'watch-link';
+    bq.appendChild(fallback);
+    wrap.appendChild(bq);
+
+    // Load Instagram embed script once
+    if (!document.getElementById('ig-embed-script')) {
+      const script = document.createElement('script');
+      script.id = 'ig-embed-script';
+      script.async = true;
+      script.src = 'https://www.instagram.com/embed.js';
+      document.body.appendChild(script);
+    } else if (window.instgrm) {
+      window.instgrm.Embeds.process();
+    }
   }
 
   // ── CONTACT ──

@@ -347,3 +347,23 @@ collections:
           - label: "Closing note"
             name: "closing_note"
             widget: "text"
+          - label: "Instagram Feature"
+            name: "instagram_feature"
+            widget: "object"
+            collapsed: true
+            hint: "Optional section showing your latest Instagram post, placed between About and Contact."
+            fields:
+              - label: "Show on site"
+                name: "enabled"
+                widget: "boolean"
+                default: false
+              - label: "Latest post URL"
+                name: "post_url"
+                widget: "string"
+                required: false
+                hint: "Paste the full URL of the post you want to feature, e.g. https://www.instagram.com/p/ABC123/"
+              - label: "Section caption (optional)"
+                name: "caption"
+                widget: "string"
+                required: false
+                hint: "Short label shown above the embed. Defaults to 'On Instagram' if left blank."
