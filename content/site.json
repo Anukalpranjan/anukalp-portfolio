@@ -1,59 +1,99 @@
 {
-  "name": "Anukalp Ranjan",
-  "role": "Video Editor & Content Creator — Bangalore",
-  "hero_line_1": "I dropped out",
-  "hero_line_2": "for this.",
-  "hero_subline": "Now I make sure your videos sound as good as they look.",
-  "stat_number": "360K",
-  "stat_label": "Views in 48 hours @dmc_unchained",
-  "age": "18 Years Old",
-  "speciality": "Talking Head & Podcast Editing",
-  "based_in": "Bangalore, India",
-  "available_for": "Freelance & Full-time",
-  "about_heading_1": "Building at the",
-  "about_heading_2": "edge of what's possible.",
-  "about_paragraph_1": "I'm Anukalp Ranjan, an 18-year-old video editor and content creator. I mainly edit talking-head and podcast-style content — long-form for YouTube and short-form for Instagram Reels and equivalent platforms — with AI avatar and gen AI ad film work as an additional skill set.",
-  "about_paragraph_2": "Currently building at the intersection of storytelling and sound. I focus on work that actually stops people mid-scroll.",
-  "about_paragraph_3": "I don't disappear mid-project. Fast turnarounds, honest updates, and I stick around after the first edit — that's the whole point.",
-  "ai_tools": ["ElevenLabs", "HeyGen", "Magnific", "Morphic"],
-  "core_skills": [
-    { "name": "Talking Head & Podcast (Long & Short-Form)", "level": 90 },
-    { "name": "DaVinci Resolve", "level": 75 },
-    { "name": "Brand Content", "level": 70 },
-    { "name": "AI Avatar Editing", "level": 65 },
-    { "name": "Ad Films", "level": 60 }
-  ],
   "contact": {
     "email": "anukalpranjan848236@gmail.com",
     "linkedin": "linkedin.com/in/anukalpblr",
     "instagram": "@anukalpx"
   },
-  "background_music": {
-    "enabled": true,
-    "file": "",
-    "volume": 50
-  },
-  "how_i_work": {
-    "heading": "How I Work",
-    "steps": [
-      { "timecode": "00:00:00:00", "title": "Share your vision", "description": "Drop references, tell me what you're picturing." },
-      { "timecode": "00:00:15:00", "title": "I study what you love", "description": "I go through your existing content — specifically the pieces you love most — to learn what's already working for you." },
-      { "timecode": "00:00:30:00", "title": "Sample reels", "description": "I cut 2 sample reels before any commitment, so we calibrate together before money or time is on the line." },
-      { "timecode": "00:00:45:00", "title": "We talk it through", "description": "An honest conversation about what worked and what didn't. Only then do we discuss a retainer or ongoing work." }
-    ]
-  },
+  "core_skills": [
+    {
+      "name": "Talking Head & Podcast (Long & Short-Form)",
+      "level": 90
+    },
+    {
+      "name": "DaVinci Resolve",
+      "level": 75
+    },
+    {
+      "name": "Brand Content",
+      "level": 70
+    },
+    {
+      "name": "AI Avatar Editing",
+      "level": 65
+    },
+    {
+      "name": "Ad Films",
+      "level": 60
+    }
+  ],
   "second_self_mention": {
     "enabled": true,
     "text": "For bigger or ongoing needs, there's a studio version of this.",
     "link_label": "Second Self",
     "link_url": ""
   },
+  "about_heading_1": "Building at the",
+  "about_heading_2": "edge of what's possible.",
+  "ai_tools": [
+    "ElevenLabs",
+    "HeyGen",
+    "Magnific",
+    "Morphic"
+  ],
+  "stat_label": "Views in 48 hours @dmc_unchained",
+  "instagram_feature": {
+    "enabled": true,
+    "post_url": "https://www.instagram.com/p/DcgVwEAI1Wu/?img_index=1"
+  },
+  "hero_line_1": "I dropped out",
+  "name": "Anukalp Ranjan",
+  "hero_line_2": "for this.",
+  "about_paragraph_1": "I'm Anukalp Ranjan, an 18-year-old video editor and content creator. I mainly edit talking-head and podcast-style content — long-form for YouTube and short-form for Instagram Reels and equivalent platforms — with AI avatar and gen AI ad film work as an additional skill set.",
+  "hero_subline": "Now I make sure your videos sound as good as they look.",
+  "about_paragraph_2": "Currently building at the intersection of storytelling and sound. I focus on work that actually stops people mid-scroll.",
+  "closing_line_1": "Let's make",
+  "about_paragraph_3": "I don't disappear mid-project. Fast turnarounds, honest updates, and I stick around after the first edit — that's the whole point.",
+  "based_in": "Bangalore, India",
+  "closing_line_2": "something.",
+  "available_for": "Freelance & Full-time",
+  "stat_number": "360K",
+  "background_music": {
+    "enabled": true,
+    "file": "",
+    "volume": 50
+  },
+  "speciality": "Talking Head & Podcast Editing",
+  "role": "Video Editor & Content Creator — Bangalore",
+  "how_i_work": {
+    "heading": "How I Work",
+    "steps": [
+      {
+        "timecode": "00:00:00:00",
+        "title": "Share your vision",
+        "description": "Drop references, tell me what you're picturing."
+      },
+      {
+        "timecode": "00:00:15:00",
+        "title": "I study what you love",
+        "description": "I go through your existing content — specifically the pieces you love most — to learn what's already working for you."
+      },
+      {
+        "timecode": "00:00:30:00",
+        "title": "Sample reels",
+        "description": "I cut 2 sample reels before any commitment, so we calibrate together before money or time is on the line."
+      },
+      {
+        "timecode": "00:00:45:00",
+        "title": "We talk it through",
+        "description": "An honest conversation about what worked and what didn't. Only then do we discuss a retainer or ongoing work."
+      }
+    ]
+  },
+  "closing_note": "Open to freelance projects, full-time roles, and creative collaborations.",
   "seo": {
     "site_title": "Anukalp Ranjan — Video Editor & Content Creator",
     "meta_description": "Video editor and content creator based in Bangalore, specializing in talking-head and podcast editing, with AI avatar and gen AI ad film work as additional skills.",
     "social_preview_image": ""
   },
-  "closing_line_1": "Let's make",
-  "closing_line_2": "something.",
-  "closing_note": "Open to freelance projects, full-time roles, and creative collaborations."
+  "age": "18 Years Old"
 }
