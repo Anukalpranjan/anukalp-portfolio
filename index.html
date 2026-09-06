@@ -457,16 +457,19 @@ section { padding: 100px 0; }
 
 /* ── INSTAGRAM ── */
 #instagram { border-top: 1px solid var(--border); display: none; }
-.ig-embed-wrap {
-  display: flex;
-  justify-content: center;
-}
-.ig-embed-wrap iframe {
-  border: none;
+.ig-embed-wrap { display: flex; justify-content: center; }
+.ig-card { max-width: 400px; width: 100%; }
+.ig-card-link { display: block; text-decoration: none; }
+.ig-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--panel);
   overflow: hidden;
-  display: block;
-  max-width: 100%;
 }
+.ig-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.2s; }
+.ig-card-link:hover .ig-thumb-wrap img { opacity: 0.8; }
+.ig-caption { font-size: 0.85rem; color: var(--grey); line-height: 1.6; margin-top: 12px; }
 .ig-profile-link {
   display: inline-block;
   margin-top: 20px;
@@ -1030,20 +1033,31 @@ async function loadSite() {
     if (igFeat.caption) document.getElementById('ig-section-label').textContent = igFeat.caption;
 
     const wrap = document.getElementById('ig-embed-wrap');
-    const m = igFeat.post_url.match(/instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/);
-    const shortcode = m ? m[1] : null;
 
-    if (shortcode) {
-      // Direct iframe embed — reliable, no external script dependency
-      const iframe = document.createElement('iframe');
-      iframe.src = `https://www.instagram.com/p/${shortcode}/embed/`;
-      iframe.width = '400';
-      iframe.height = '505';
-      iframe.frameBorder = '0';
-      iframe.scrolling = 'no';
-      iframe.setAttribute('allowtransparency', 'true');
-      wrap.appendChild(iframe);
+    if (igFeat.thumbnail) {
+      // Thumbnail card — matches work-item bracket aesthetic
+      const thumbSrc = igFeat.thumbnail.startsWith('/')
+        ? `${RAW}${igFeat.thumbnail}`
+        : igFeat.thumbnail;
+      const card = document.createElement('div');
+      card.className = 'ig-card';
+      card.innerHTML = `
+        <a class="ig-card-link" href="${igFeat.post_url}" target="_blank" rel="noopener noreferrer">
+          <div class="ig-thumb-wrap">
+            <span class="bracket bracket-tl" aria-hidden="true"></span>
+            <span class="bracket bracket-tr" aria-hidden="true"></span>
+            <span class="bracket bracket-bl" aria-hidden="true"></span>
+            <span class="bracket bracket-br" aria-hidden="true"></span>
+            <img src="${thumbSrc}" alt="Latest Instagram post" loading="lazy">
+            <div class="work-hud">
+              <span class="work-hud-tag">Instagram</span>
+            </div>
+          </div>
+          ${igFeat.post_caption ? `<p class="ig-caption">${igFeat.post_caption}</p>` : ''}
+        </a>`;
+      wrap.appendChild(card);
     } else {
+      // No thumbnail yet — plain fallback link
       const link = document.createElement('a');
       link.href = igFeat.post_url;
       link.target = '_blank';

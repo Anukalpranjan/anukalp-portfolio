@@ -357,13 +357,23 @@ collections:
                 name: "enabled"
                 widget: "boolean"
                 default: false
-              - label: "Latest post URL"
+              - label: "Post URL"
                 name: "post_url"
                 widget: "string"
                 required: false
-                hint: "Paste the full URL of the post you want to feature, e.g. https://www.instagram.com/p/ABC123/"
-              - label: "Section caption (optional)"
+                hint: "Full URL of the Instagram post — used as the link when someone clicks the card."
+              - label: "Post thumbnail"
+                name: "thumbnail"
+                widget: "image"
+                required: false
+                hint: "Screenshot or export of your post. Square crops look best. This is what shows on the portfolio."
+              - label: "Post caption (optional)"
+                name: "post_caption"
+                widget: "text"
+                required: false
+                hint: "Short description shown below the image on the portfolio."
+              - label: "Section label (optional)"
                 name: "caption"
                 widget: "string"
                 required: false
-                hint: "Short label shown above the embed. Defaults to 'On Instagram' if left blank."
+                hint: "Label above the section. Defaults to 'On Instagram' if left blank."
