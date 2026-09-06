@@ -461,9 +461,11 @@ section { padding: 100px 0; }
   display: flex;
   justify-content: center;
 }
-.ig-embed-wrap .instagram-media {
-  min-width: 0 !important;
-  margin: 0 !important;
+.ig-embed-wrap iframe {
+  border: none;
+  overflow: hidden;
+  display: block;
+  max-width: 100%;
 }
 .ig-profile-link {
   display: inline-block;
@@ -1027,31 +1029,28 @@ async function loadSite() {
     igSection.style.display = 'block';
     if (igFeat.caption) document.getElementById('ig-section-label').textContent = igFeat.caption;
 
-    // Render native Instagram embed
     const wrap = document.getElementById('ig-embed-wrap');
-    const bq = document.createElement('blockquote');
-    bq.className = 'instagram-media';
-    bq.setAttribute('data-instgrm-permalink', igFeat.post_url);
-    bq.setAttribute('data-instgrm-version', '14');
-    bq.style.cssText = 'background:#000;border:0;border-radius:0;max-width:540px;width:100%;';
-    const fallback = document.createElement('a');
-    fallback.href = igFeat.post_url;
-    fallback.target = '_blank';
-    fallback.rel = 'noopener noreferrer';
-    fallback.textContent = 'View on Instagram ↗';
-    fallback.className = 'watch-link';
-    bq.appendChild(fallback);
-    wrap.appendChild(bq);
+    const m = igFeat.post_url.match(/instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)/);
+    const shortcode = m ? m[1] : null;
 
-    // Load Instagram embed script once
-    if (!document.getElementById('ig-embed-script')) {
-      const script = document.createElement('script');
-      script.id = 'ig-embed-script';
-      script.async = true;
-      script.src = 'https://www.instagram.com/embed.js';
-      document.body.appendChild(script);
-    } else if (window.instgrm) {
-      window.instgrm.Embeds.process();
+    if (shortcode) {
+      // Direct iframe embed — reliable, no external script dependency
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.instagram.com/p/${shortcode}/embed/`;
+      iframe.width = '400';
+      iframe.height = '505';
+      iframe.frameBorder = '0';
+      iframe.scrolling = 'no';
+      iframe.setAttribute('allowtransparency', 'true');
+      wrap.appendChild(iframe);
+    } else {
+      const link = document.createElement('a');
+      link.href = igFeat.post_url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = 'watch-link';
+      link.textContent = 'View on Instagram ↗';
+      wrap.appendChild(link);
     }
   }
 
