@@ -4,19 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="page-title">Anukalp Ranjan — Video Editor &amp; Content Creator</title>
-<meta name="description" id="meta-desc" content="Video editor and content creator based in Bangalore.">
+<!-- Link-preview tags are static on purpose: WhatsApp, LinkedIn, Instagram etc. don't run JavaScript, so
+     they only see what is here. The script below still updates the browser-tab title from site.json. -->
+<meta name="description" id="meta-desc" content="Video editor and content creator based in Bangalore, specializing in talking-head and podcast editing, with AI avatar and gen AI ad film work as additional skills.">
+<link rel="canonical" href="https://portfolio-anukalp-ranjan.vercel.app/">
+<meta property="og:site_name" content="Anukalp Ranjan">
+<meta property="og:url" content="https://portfolio-anukalp-ranjan.vercel.app/">
 <meta property="og:title" id="og-title" content="Anukalp Ranjan — Video Editor &amp; Content Creator">
-<meta property="og:description" id="og-desc" content="Video editor and content creator based in Bangalore.">
-<meta property="og:image" id="og-image" content="">
+<meta property="og:description" id="og-desc" content="Video editor and content creator based in Bangalore, specializing in talking-head and podcast editing, with AI avatar and gen AI ad film work as additional skills.">
+<meta property="og:image" id="og-image" content="https://portfolio-anukalp-ranjan.vercel.app/content/images/og-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Anukalp Ranjan — Video Editor and Content Creator">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" id="tw-title" content="Anukalp Ranjan — Video Editor &amp; Content Creator">
-<meta name="twitter:description" id="tw-desc" content="Video editor and content creator based in Bangalore.">
-<meta name="twitter:image" id="tw-image" content="">
+<meta name="twitter:description" id="tw-desc" content="Video editor and content creator based in Bangalore, specializing in talking-head and podcast editing, with AI avatar and gen AI ad film work as additional skills.">
+<meta name="twitter:image" id="tw-image" content="https://portfolio-anukalp-ranjan.vercel.app/content/images/og-preview.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
 /* ── TOKENS ── */
 :root {
@@ -292,6 +299,8 @@ section { padding: 100px 0; }
 .work-item.vertical { grid-column: span 1; }
 .work-item.horizontal { grid-column: span 2; }
 @media (max-width: 600px) { .work-item.horizontal { grid-column: span 1; } }
+.work-empty { grid-column: 1 / -1; font-family: var(--mono); font-size: 0.85rem; line-height: 1.7; color: var(--grey); }
+.work-empty a { color: var(--ivory); text-decoration: underline; text-underline-offset: 3px; }
 
 /* Corner brackets — the viewfinder treatment */
 .work-thumb-wrap {
@@ -454,6 +463,7 @@ section { padding: 100px 0; }
 }
 #second-self p { font-size: 0.88rem; color: var(--grey); }
 #second-self a { font-family: var(--mono); font-size: 0.78rem; color: var(--ivory); text-decoration: underline; text-underline-offset: 3px; margin-top: 6px; display: inline-block; }
+#second-self a:not([href]) { text-decoration: none; }
 
 /* ── INSTAGRAM ── */
 #instagram { border-top: 1px solid var(--border); display: none; }
@@ -612,7 +622,7 @@ footer {
     </div>
     <div id="second-self">
       <p id="second-self-text"></p>
-      <a id="second-self-link" href="#">—</a>
+      <a id="second-self-link">—</a>
     </div>
   </div>
 </section>
@@ -651,10 +661,60 @@ const BRANCH = 'main';
 const API = `https://api.github.com/repos/${REPO}/contents`;
 const RAW = `https://raw.githubusercontent.com/${REPO}/${BRANCH}`;
 
+// The GitHub contents API allows only 60 unauthenticated requests/hour per IP, so on a shared
+// network (office, campus) it can start answering 403. Directory listings therefore fall back to
+// jsDelivr's file index, then to the last listing this browser saw. Only file names come from
+// here; the JSON itself is read from raw.githubusercontent.com, which that limit doesn't cover.
+let jsdelivrIndex;
+function listViaJsdelivr(path) {
+  // The timestamp keeps the browser from reusing a stale copy (jsDelivr sends a 1-year max-age).
+  if (!jsdelivrIndex) {
+    jsdelivrIndex = fetch(`https://data.jsdelivr.com/v1/packages/gh/${REPO}@${BRANCH}?structure=flat&t=${Date.now()}`)
+      .then(r => { if (!r.ok) throw new Error(`jsDelivr ${r.status}`); return r.json(); });
+  }
+  const prefix = `/${path}/`;
+  return jsdelivrIndex.then(({ files }) => files
+    .map(f => f.name)
+    .filter(n => n.startsWith(prefix) && !n.slice(prefix.length).includes('/'))
+    .map(n => n.slice(prefix.length)));
+}
+
 async function listDir(path) {
-  const r = await fetch(`${API}/${path}?ref=${BRANCH}`);
-  if (!r.ok) return [];
-  return r.json();
+  const isJson = n => n.endsWith('.json');
+  const cacheKey = `portfolio:listing:${path}`;
+  try {
+    const r = await fetch(`${API}/${path}?ref=${BRANCH}`);
+    if (!r.ok) throw new Error(`GitHub API ${r.status}`);
+    const names = (await r.json()).filter(f => f.type === 'file').map(f => f.name).filter(isJson);
+    try { localStorage.setItem(cacheKey, JSON.stringify(names)); } catch {}
+    return names;
+  } catch (err) {
+    console.warn(`Could not list ${path} via the GitHub API (${err.message}); trying fallbacks.`);
+  }
+  try {
+    const names = (await listViaJsdelivr(path)).filter(isJson);
+    if (names.length) return names;
+  } catch (err) {
+    console.warn(`jsDelivr listing failed (${err.message}).`);
+  }
+  try {
+    const cached = JSON.parse(localStorage.getItem(cacheKey));
+    if (Array.isArray(cached)) return cached;
+  } catch {}
+  return [];
+}
+
+// Read one JSON file: raw.githubusercontent.com first, then this site's own copy (Vercel serves
+// the repo statically). Resolves to null if neither works, so one bad file can't blank the page.
+async function fetchJson(path, bust) {
+  const urls = [`${RAW}/${path}${bust ? `?t=${bust}` : ''}`, `/${path}`];
+  for (const url of urls) {
+    try {
+      const r = await fetch(url);
+      if (r.ok) return await r.json();
+    } catch {}
+  }
+  return null;
 }
 
 // ── MUSIC DUCK ──
@@ -737,22 +797,16 @@ async function loadSite() {
   const [catFiles, workFiles, site] = await Promise.all([
     listDir('content/categories'),
     listDir('content/work'),
-    fetch(`${RAW}/content/site.json?t=${t}`).then(r => r.json())
+    fetchJson('content/site.json', t)
   ]);
+  if (!site) throw new Error('Could not load content/site.json');
 
-  // Fetch all category and work JSON files in parallel
-  const [categories, allWorkItems] = await Promise.all([
-    Promise.all(
-      catFiles
-        .filter(f => f.type === 'file' && f.name.endsWith('.json'))
-        .map(f => fetch(f.download_url).then(r => r.json()))
-    ),
-    Promise.all(
-      workFiles
-        .filter(f => f.type === 'file' && f.name.endsWith('.json'))
-        .map(f => fetch(f.download_url).then(r => r.json()))
-    )
-  ]);
+  // Fetch all category and work JSON files in parallel; any file that fails to load is skipped
+  const fetchAll = (dir, names) => Promise.all(names.map(n => fetchJson(`${dir}/${encodeURIComponent(n)}`)));
+  const [categories, allWorkItems] = (await Promise.all([
+    fetchAll('content/categories', catFiles),
+    fetchAll('content/work', workFiles)
+  ])).map(list => list.filter(Boolean));
 
   // Sort categories by display rank
   categories.sort((a, b) => (a.rank || 0) - (b.rank || 0));
@@ -881,6 +935,10 @@ async function loadSite() {
   // ── WORK GRID ──
   const workList = document.getElementById('work-list');
   workList.innerHTML = '';
+  if (!items.length) {
+    const mail = site.contact && site.contact.email;
+    workList.innerHTML = `<p class="work-empty">Couldn't load the work just now. Try refreshing${mail ? `, or email <a href="mailto:${mail}">${mail}</a> and I'll send it over` : ''}.</p>`;
+  }
   items.forEach(item => {
     const ytId = getYtId(item);
     const isUpload = item.video_kind === 'Uploaded file' && item.video_file;
